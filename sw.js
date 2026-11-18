@@ -1,5 +1,5 @@
 // What If Machine offline cache. Bump VERSION whenever index.html changes.
-const VERSION = "wim-v2";
+const VERSION = "wim-v3";
 const CORE = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", e => {
@@ -16,6 +16,12 @@ self.addEventListener("fetch", e => {
   if (req.mode === "navigate") {
     e.respondWith(fetch(req).then(r => { const copy = r.clone(); caches.open(VERSION).then(c => c.put("index.html", copy)); return r; })
       .catch(() => caches.match("index.html")));
+    return;
+  }
+  // Live alert data: always try the network, fall back to the last copy.
+  if (url.origin === location.origin && url.pathname.includes("/alerts/")) {
+    e.respondWith(fetch(req).then(r => { const copy = r.clone(); caches.open(VERSION).then(c => c.put(req, copy)); return r; })
+      .catch(() => caches.match(req)));
     return;
   }
   // Everything else (icons, Google Fonts): cache first, then fill the cache from the network.

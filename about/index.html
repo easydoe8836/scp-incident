@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What If Machine</title>
+<meta name="description" content="Step-by-step plans for the moments life goes wrong, from a power cut to a lost job. Free, offline, and private.">
+<meta name="theme-color" content="#13110d">
+<meta property="og:title" content="What If Machine">
+<meta property="og:description" content="Step-by-step plans for the moments life goes wrong. Free, offline, and private.">
+<meta property="og:image" content="desktop-file.webp">
+<link rel="icon" href="../icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a declassified briefing. Stamped hero with product shots, then numbered briefing sections. Single dark theme to match the app. */
+:root {
+  --bg: #0c0b09; --panel: #13110d; --panel-2: #1a1712; --fg: #ecd9ae; --dim: #a39477; --line: #3a3326;
+  --amber: #ffb547; --alert: #ff5d4f; --ok: #9ed39a; --ice: #7fc8d6;
+  --display: "VT323", "IBM Plex Mono", ui-monospace, monospace;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { animation: none !important; transition: none !important; } }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--sans);
+  background-image: radial-gradient(ellipse at 50% 0%, #1d1912 0%, var(--bg) 60%); }
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+a { color: var(--amber); }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+img { max-width: 100%; display: block; height: auto; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+.skip { position: absolute; left: 8px; top: -60px; background: var(--amber); color: var(--bg); padding: 8px 12px; font-weight: 600; z-index: 10; }
+.skip:focus { top: 8px; }
+
+header.top { border-bottom: 1px solid var(--line); background: var(--panel); }
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; flex-wrap: wrap; }
+.brand { font: 400 28px/1 var(--display); letter-spacing: .06em; color: var(--amber); text-decoration: none; }
+nav.links { display: flex; gap: 18px; flex-wrap: wrap; font: 500 12px var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+nav.links a { color: var(--dim); text-decoration: none; }
+nav.links a:hover { color: var(--fg); }
+
+.hero { padding-block: 56px 40px; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+.eyebrow { font: 500 12px var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--dim); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.stamp { display: inline-block; font: 400 18px/1 var(--display); letter-spacing: .14em; color: var(--alert); border: 2px solid var(--alert); padding: 4px 10px 2px; transform: rotate(-4deg); }
+h1 { font: 400 clamp(54px, 9vw, 104px)/.88 var(--display); letter-spacing: .02em; color: var(--amber); margin: 18px 0 18px; text-transform: uppercase; text-shadow: 0 0 18px rgba(255,181,71,.3); text-wrap: balance; }
+.lede { font-size: 20px; line-height: 1.5; max-width: 34ch; margin: 0 0 26px; }
+.lede .r { background: var(--fg); color: transparent; border-radius: 1px; }
+.cta { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn { font: 600 13px var(--mono); letter-spacing: .12em; text-transform: uppercase; text-decoration: none; padding: 14px 20px; border: 1px solid var(--line); color: var(--fg); background: var(--panel); }
+.btn.primary { background: var(--ok); border-color: var(--ok); color: #0c0b09; }
+.btn:hover { border-color: var(--amber); }
+.small { font: 12px var(--mono); color: var(--dim); margin-top: 14px; }
+
+.shots { position: relative; min-height: 300px; }
+.shots .desk { border: 1px solid var(--line); box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+.shots .phone { position: absolute; width: 30%; right: -2%; bottom: -12%; border: 6px solid #26221a; border-radius: 22px; box-shadow: 0 20px 50px rgba(0,0,0,.7); }
+
+section { padding-block: 56px; border-top: 1px solid var(--line); }
+.sec-h { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 16px; align-items: baseline; margin-bottom: 26px; }
+.sec-no { font: 400 34px/1 var(--display); color: var(--dim); }
+h2 { font: 400 clamp(34px, 5vw, 48px)/1 var(--display); letter-spacing: .04em; text-transform: uppercase; margin: 0; color: var(--fg); }
+.sec-h p { grid-column: 2; margin: 8px 0 0; color: var(--dim); max-width: 60ch; }
+
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 1px solid var(--line); }
+.steps > div { padding: 22px; border-right: 1px solid var(--line); background: var(--panel); }
+.steps > div:last-child { border-right: 0; }
+.steps b { font: 500 11px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--amber); }
+.steps h3 { font: 600 19px/1.3 var(--sans); margin: 8px 0 6px; }
+.steps p { margin: 0; color: var(--dim); font-size: 15px; }
+.steps code { font: 13px var(--mono); color: var(--ice); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.card { border: 1px dashed var(--line); padding: 18px; background: rgba(19,17,13,.6); }
+.card .tag { font: 500 10.5px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.card h3 { font: 600 17px/1.3 var(--sans); margin: 6px 0 6px; color: var(--fg); }
+.card p { margin: 0; font-size: 14.5px; color: var(--dim); }
+.card.hl { border-style: solid; border-color: var(--ok); }
+.card.hl .tag { color: var(--ok); }
+
+.split2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+.panel { border: 1px solid var(--line); background: var(--panel); padding: 22px; }
+.panel h3 { font: 500 12px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--amber); margin: 0 0 10px; }
+.panel ol, .panel ul { margin: 0; padding-left: 20px; }
+.panel li { margin-bottom: 6px; }
+.warn { border-color: var(--alert); }
+.warn h3 { color: var(--alert); }
+.phoneshot { max-width: 300px; margin: 0 auto; border: 6px solid #26221a; border-radius: 22px; }
+
+footer { border-top: 1px solid var(--line); padding-block: 30px 50px; font: 12.5px/1.7 var(--mono); color: var(--dim); }
+footer .wrap { display: grid; gap: 10px; }
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: minmax(0, 1fr); padding-block: 36px 60px; }
+  .shots .phone { width: 34%; bottom: -16%; right: 2%; }
+  .steps { grid-template-columns: minmax(0, 1fr); }
+  .steps > div { border-right: 0; border-bottom: 1px solid var(--line); }
+  .steps > div:last-child { border-bottom: 0; }
+  .split2 { grid-template-columns: minmax(0, 1fr); }
+  .sec-h { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .sec-h p { grid-column: 1; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap">
+  <a class="brand" href="./">WHAT IF MACHINE</a>
+  <nav class="links" aria-label="Page sections"><a href="#how">How it works</a><a href="#features">Features</a><a href="#install">Install</a><a href="#contribute">Contribute</a><a href="../">Open app</a></nav>
+</div></header>
+
+<main id="main">
+  <div class="wrap hero">
+    <div>
+      <div class="eyebrow"><span class="stamp">Declassified</span><span>Directorate of Contingencies · public release</span></div>
+      <h1>What if it goes wrong?</h1>
+      <p class="lede">Lost job. No internet. Burst pipe. Stolen phone. Pick what happened and follow a clear, step-by-step plan, written like a <span class="r">classified</span> containment protocol.</p>
+      <div class="cta"><a class="btn primary" href="../">Open the terminal</a><a class="btn" href="#install">Add to your phone</a></div>
+      <p class="small">Free. Works offline. Nothing you enter leaves your device.</p>
+    </div>
+    <div class="shots" aria-hidden="false">
+      <img class="desk" src="desktop-file.webp" width="2560" height="1640" alt="The What If Machine on a laptop, showing the Water leak file with an emergency card and a branching flowchart of steps.">
+      <img class="phone" src="phone-guide.webp" width="780" height="1688" alt="Guide mode on a phone, showing one large step with Done and Skip buttons and the emergency number pinned at the bottom.">
+    </div>
+  </div>
+
+  <section id="how"><div class="wrap">
+    <div class="sec-h"><span class="sec-no">01</span><div><h2>How it works</h2><p>Three steps, built for the moment your head isn't working at full speed.</p></div></div>
+    <div class="steps">
+      <div><b>Step 1</b><h3>Say what happened</h3><p>Type it in plain words, like <code>my boiler's leaking</code>, or tap a file on the facility map.</p></div>
+      <div><b>Step 2</b><h3>Follow the procedure</h3><p>A flowchart shows every step and every fork. Guide mode walks you through one big step at a time.</p></div>
+      <div><b>Step 3</b><h3>Keep a record</h3><p>Incident mode timestamps what you did, ready to paste to an insurer, landlord, or employer.</p></div>
+    </div>
+  </div></section>
+
+  <section id="features"><div class="wrap">
+    <div class="sec-h"><span class="sec-no">02</span><div><h2>What's on file</h2><p>22 scenarios across work, home, tech, travel, health, and life, each with its own procedure and prep checklist.</p></div></div>
+    <div class="grid">
+      <div class="card hl"><span class="tag">Safety first</span><h3>Emergency number on every critical file</h3><p>Medical, mental health, and safety files point you to emergency services and crisis lines before anything else.</p></div>
+      <div class="card"><span class="tag">Tailored</span><h3>Your country, your nation</h3><p>Numbers and rules for England, Scotland, Wales, Northern Ireland, Ireland, the US, Canada, Australia, and New Zealand, each linked to its source.</p></div>
+      <div class="card"><span class="tag">Live</span><h3>Weather and flood alerts</h3><p>Met Office warnings and Environment Agency flood alerts for your area raise the threat level on the files that matter.</p></div>
+      <div class="card"><span class="tag">Guide mode</span><h3>One step at a time</h3><p>Big text, big buttons, swipe between steps. The emergency number stays pinned at the bottom.</p></div>
+      <div class="card"><span class="tag">Readiness</span><h3>Prepare before it happens</h3><p>Each file has things to do in advance, like finding your stopcock. A readiness score tracks your progress.</p></div>
+      <div class="card"><span class="tag">Builder</span><h3>Write your own</h3><p>Build procedures for your own life, like "boiler fails at the rental flat", and share them with friends as a file.</p></div>
+      <div class="card"><span class="tag">Calm mode</span><h3>Less noise when it counts</h3><p>No flicker, alarms, or effects, and larger text. Turns on by itself for medical, bereavement, and mental health files.</p></div>
+      <div class="card"><span class="tag">Offline</span><h3>Works with no signal</h3><p>Once you've opened it, it loads without internet. That's when you need it most.</p></div>
+    </div>
+  </div></section>
+
+  <section id="install"><div class="wrap split2">
+    <div>
+      <div class="sec-h"><span class="sec-no">03</span><div><h2>Add it to your phone</h2><p>It installs like an app, with no app store and no account.</p></div></div>
+      <div class="panel"><h3>iPhone (Safari)</h3><ol><li>Open <a href="../">the terminal</a>.</li><li>Tap Share, then "Add to Home Screen".</li></ol></div>
+      <div class="panel" style="margin-top:12px"><h3>Android (Chrome)</h3><ol><li>Open <a href="../">the terminal</a>.</li><li>Tap the menu, then "Install app".</li></ol></div>
+      <div class="panel" style="margin-top:12px"><h3>Your privacy</h3><ul><li>Your profile, contacts, ticks, and logs are stored only in your browser.</li><li>For flood alerts, only the first half of your postcode is looked up.</li><li>No accounts, tracking, or ads.</li></ul></div>
+    </div>
+    <img class="phoneshot" src="phone-map.webp" width="780" height="1688" alt="The facility map home screen on a phone, with sectors for work, tech, home, travel, health, and life, and a tab bar at the bottom.">
+  </div></section>
+
+  <section id="contribute"><div class="wrap split2">
+    <div>
+      <div class="sec-h"><span class="sec-no">04</span><div><h2>Add your country</h2><p>Every country has different emergency numbers, helplines, and rules. If yours is missing or out of date, you can add it.</p></div></div>
+      <p>The contribution guide explains how to add a country's numbers and links, how to check them against official sources, and how to write a new scenario. Everything lives in one HTML file, so no build tools are needed.</p>
+      <div class="cta"><a class="btn" href="https://github.com/easydoe8836/scp-incident/blob/main/CONTRIBUTING.md">Read the guide</a><a class="btn" href="https://github.com/easydoe8836/scp-incident">View on GitHub</a></div>
+    </div>
+    <div class="panel warn"><h3>Important</h3><p>The What If Machine gives general guidance only. It isn't legal, financial, or medical advice, and rules change. If anyone is in danger, call your local emergency number first: 999 or 112 in the UK.</p></div>
+  </div></section>
+</main>
+
+<footer><div class="wrap">
+  <span>What If Machine. An original project inspired by containment-procedure fiction. All scenarios and artwork are original.</span>
+  <span>Flood alerts contain public sector information licensed under the Open Government Licence v3.0. Weather warnings © Crown copyright, Met Office.</span>
+</div></footer>
+</body>
+</html>

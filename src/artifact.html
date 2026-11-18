@@ -900,12 +900,12 @@ a, button, input { font: inherit; color: inherit; }
 .box { flex: none; width: 15px; height: 15px; border: 1px solid var(--dim); margin-top: 3px; display: grid; place-items: center; }
 .step input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .step input:focus-visible + .box { outline: 2px solid var(--amber); outline-offset: 2px; }
-.step h4 { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.35; }
+.step h3 { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.35; }
 .step p { margin: 4px 0 0 25px; font-size: 12.5px; line-height: 1.55; color: var(--dim); }
 .step.done { border-color: var(--ok); box-shadow: 0 0 0 1px var(--ok) inset, 0 0 14px rgba(158,211,154,.12); }
 .step.done .box { border-color: var(--ok); background: var(--ok); }
 .step.done .box::after { content: "✓"; color: var(--bg); font-size: 11px; font-weight: 700; line-height: 1; }
-.step.done h4 { color: var(--ok); }
+.step.done h3 { color: var(--ok); }
 .step.done::after { content: "EXECUTED"; position: absolute; right: 10px; bottom: 8px; font: 400 16px/1 var(--font-display); letter-spacing: .16em; color: var(--ok); border: 1px solid var(--ok); padding: 1px 5px 0; animation: stamp .35s cubic-bezier(.2,1.6,.4,1); transform: rotate(-4deg); }
 @keyframes stamp { from { transform: rotate(-4deg) scale(2.2); opacity: 0; } }
 .decision { width: 100%; max-width: 360px; text-align: center; color: var(--ice); padding: 12px 22px; position: relative; background: rgba(127,200,214,.07);
@@ -1073,7 +1073,7 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
 .calm-on .d-title { text-shadow: none; }
 .calm-on .wire.live::after { display: none; }
 .calm-on body, body.calm-text { font-size: var(--base); }
-.calm-on .step h4 { font-size: 16px; }
+.calm-on .step h3 { font-size: 16px; }
 .calm-on .step p { font-size: 14.5px; color: var(--fg); }
 .calm-on .assess { font-size: 16px; }
 .calmflag { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ice); border: 1px solid var(--ice); padding: 2px 8px; }
@@ -1161,7 +1161,7 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
 .g-actions button { flex: 1; min-height: 56px; font-size: 15px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; border: 1px solid var(--line); background: var(--panel); color: var(--fg); }
 .g-actions .g-next { flex: 2; background: var(--ok); color: var(--on-accent); border-color: var(--ok); font-weight: 600; }
 .g-actions button:disabled { opacity: .35; cursor: default; }
-.g-sos { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--alert); color: #fff;
+.g-sos { position: relative; z-index: 52; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--alert); color: #fff;
   padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px)); font-size: 13px; }
 .g-sos b { font: 400 30px/1 var(--font-display); letter-spacing: .06em; user-select: all; }
 :root[data-theme-ui="paper"] .g-sos b { font-family: var(--font-mono); font-weight: 700; font-size: 22px; }
@@ -1205,6 +1205,55 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
   .map { grid-template-columns: minmax(0, 1fr); min-width: 0; }
   .map .sector { grid-column: 1 / -1; grid-row: auto; }
 }
+/* ===== Live alerts ===== */
+.alertbar-live { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; background: var(--panel-2); border-bottom: 2px solid var(--lvl);
+  padding-block: 8px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); font-size: 12.5px; }
+.alertbar-live .lab { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--bg); background: var(--lvl); padding: 2px 8px; font-weight: 600; }
+.alertbar-live .txt { min-width: 0; }
+.alertbar-live .sp { flex: 1; }
+.alertbar-live a { color: var(--fg); border: 1px solid var(--line); padding: 3px 8px; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; }
+.livebox { margin-top: 14px; border: 1px solid var(--lvl); border-left-width: 4px; padding: 8px 12px; background: var(--panel-2); font-size: 13px; }
+.livebox p { margin: 4px 0; }
+.livebox a { color: var(--ice); }
+
+/* ===== Builder ===== */
+.b-form { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+.b-grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.b-f { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.b-f > span { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+.b-f input, .b-f select, .b-f textarea { background: var(--bg); color: var(--fg); border: 1px solid var(--line); padding: 7px 9px; width: 100%; min-width: 0; font: inherit; }
+.b-f textarea { resize: vertical; }
+.b-nodes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.b-node { border: 1px solid var(--line); background: var(--panel-2); padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+.b-dec { border-color: var(--ice); }
+.b-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.b-tag { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); }
+.b-dec > .b-row .b-tag { color: var(--ice); }
+.b-ctl { margin-left: auto; display: flex; gap: 4px; }
+.b-ctl button, .b-small { background: var(--panel); border: 1px solid var(--line); color: var(--fg); min-width: 32px; min-height: 32px; padding: 4px 10px; cursor: pointer; font-size: 12px; }
+.b-ctl button:disabled { opacity: .3; cursor: default; }
+.b-chk { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; color: var(--dim); }
+.b-grid { display: grid; grid-template-columns: minmax(0, 1fr) 110px; gap: 8px; }
+.b-branches { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+.b-branch { border-left: 2px solid var(--ice); padding-left: 10px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.b-inline { flex: 1; }
+.b-add { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.b-file { position: relative; overflow: hidden; display: inline-flex; align-items: center; }
+.b-file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.b-file:focus-within { outline: 2px solid var(--amber); outline-offset: 2px; }
+.b-item { grid-template-columns: 70px minmax(0, 1fr) auto; }
+.b-item a { color: var(--fg); }
+.b-acts { display: flex; gap: 6px; }
+.builder-link { display: block; padding: 8px 10px; border: 1px dashed var(--line); text-decoration: none; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.builder-link:hover, .builder-link[aria-current="page"] { border-color: var(--amber); color: var(--fg); }
+
+/* ===== Accessibility ===== */
+.skip { position: absolute; left: 8px; top: -60px; z-index: 60; background: var(--amber); color: var(--on-accent); padding: 8px 12px; font-weight: 600; border: 0; cursor: pointer; }
+.skip:focus { top: calc(8px + env(safe-area-inset-top, 0px)); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.dossier:focus { outline: none; }
+.dossier:focus-visible { outline: 2px solid var(--amber); }
+@media (forced-colors: active) { .redact { forced-color-adjust: none; } .pip { forced-color-adjust: none; } }
 </style>
 
 <div class="crt" aria-hidden="true"></div>
@@ -1215,6 +1264,7 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
   <pre id="bootText"></pre>
 </div>
 
+<button type="button" class="skip" id="skip">Skip to current file</button>
 <div class="shell">
   <header class="topbar">
     <div class="brand"><b class="glowtext">WHAT IF MACHINE</b><span>Directorate of Contingencies · WARDEN terminal</span></div>
@@ -1223,10 +1273,12 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
       <button type="button" class="tbtn" id="settingsBtn">Settings</button>
       <button type="button" class="tbtn" id="soundBtn" aria-pressed="true">Sound: on</button></div>
   </header>
+  <div id="alertbar" hidden role="status" aria-live="polite"></div>
   <div class="activebar" id="activebar" hidden role="status"></div>
   <div class="body">
     <nav class="index" aria-label="Incident archive">
       <a class="ready-link" href="#readiness" id="readyLink">Readiness <b id="readyPct">0%</b></a>
+      <a class="builder-link" href="#builder" id="builderLink">+ Scenario builder</a>
       <span class="label">Incident archive</span>
       <div class="filters" id="filters" role="group" aria-label="Filter by category"></div>
       <ul class="files" id="files"></ul>
@@ -1243,7 +1295,7 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
             <button class="send" type="submit">Query</button>
           </form>
         </section>
-        <article class="dossier" id="dossier"></article>
+        <article class="dossier" id="dossier" tabindex="-1" aria-live="off"></article>
       </div>
     </main>
   </div>
@@ -1285,6 +1337,10 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
           <label class="opt-in"><input type="radio" name="alarm" id="sa-soft" value="soft"><span>Soft chime</span></label>
           <label class="opt-in"><input type="radio" name="alarm" id="sa-off" value="off"><span>Off</span></label>
         </div></fieldset>
+      <fieldset class="field"><legend>Live alerts</legend>
+        <div class="opts"><label class="opt-in"><input type="checkbox" id="s-live"><span>Check Met Office and flood alerts</span></label>
+          <button type="button" class="tbtn" id="s-check">Check now</button></div>
+        <p class="note">Set your postcode district and weather area in your profile. Live alerts need the installed site; the preview can't reach outside websites.</p></fieldset>
       <fieldset class="field"><legend>Phone</legend>
         <div class="opts"><label class="opt-in"><input type="checkbox" id="s-buzz"><span>Vibrate when I tick a step</span></label></div>
         <p class="note">Vibration works on most Android phones. iPhones don't allow it from web pages.</p></fieldset>
@@ -1300,6 +1356,10 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
       <label class="field"><span>Location</span><select id="pf-country"></select></label>
       <label class="field" id="pf-region-wrap"><span>UK nation</span><select id="pf-region">
         <option value="england">England</option><option value="scotland">Scotland</option><option value="wales">Wales</option><option value="ni">Northern Ireland</option></select></label>
+      <div class="field" id="pf-alerts-wrap"><span>Live alerts (UK)</span>
+        <div class="crow"><input type="text" id="pf-postcode" placeholder="Postcode district, e.g. SW1A" aria-label="Postcode district for flood alerts" maxlength="8" autocomplete="postal-code">
+          <select id="pf-area" aria-label="Weather warning area"><option value="">Weather area…</option></select></div>
+        <p class="note">Only the district (first half of your postcode) is looked up, to find flood alerts near you. Flood alerts cover England; weather warnings cover the whole UK.</p></div>
       <fieldset class="field"><legend>Budget right now</legend>
         <div class="opts">
           <label class="opt-in"><input type="radio" name="budget" id="pf-b-tight" value="tight"><span>Tight</span></label>
@@ -1339,10 +1399,11 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     set(k, v) { try { localStorage.setItem("wim:" + k, JSON.stringify(v)); } catch {} },
     del(k) { try { localStorage.removeItem("wim:" + k); } catch {} }
   };
-  const SET = Object.assign({ theme: "terminal", calm: "auto", hum: 50, fx: 70, alarm: "standard", buzz: true }, (() => { try { return JSON.parse(localStorage.getItem("wim:settings")) || {}; } catch { return {}; } })());
+  const SET = Object.assign({ theme: "terminal", calm: "auto", hum: 50, fx: 70, alarm: "standard", buzz: true, live: true }, (() => { try { return JSON.parse(localStorage.getItem("wim:settings")) || {}; } catch { return {}; } })());
   const saveSet = () => { try { localStorage.setItem("wim:settings", JSON.stringify(SET)); } catch {} };
   document.documentElement.dataset.themeUi = SET.theme;
-  const applyCalm = s => document.documentElement.classList.toggle("calm-on", SET.calm === "on" || (SET.calm === "auto" && !!(s && s.calm)));
+  const HC = matchMedia("(prefers-contrast: more)").matches;
+  const applyCalm = s => document.documentElement.classList.toggle("calm-on", SET.calm === "on" || (SET.calm === "auto" && (HC || !!(s && s.calm))));
   applyCalm(null);
   const buzz = () => { if (SET.buzz && navigator.vibrate) try { navigator.vibrate(18); } catch {} };
   const ss = { get(k) { try { return sessionStorage.getItem(k); } catch { return null; } }, set(k, v) { try { sessionStorage.setItem(k, v); } catch {} } };
@@ -1491,10 +1552,11 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     const cur = byId[location.hash.slice(1)] ? location.hash.slice(1) : null;
     $("readyPct").textContent = readiness().pct + "%";
     if (location.hash === "#readiness") $("readyLink").setAttribute("aria-current", "page"); else $("readyLink").removeAttribute("aria-current");
+    if (location.hash === "#builder") $("builderLink").setAttribute("aria-current", "page"); else $("builderLink").removeAttribute("aria-current");
     const list = SCENARIOS.filter(s => cat === "All" || s.category === cat);
     $("files").innerHTML = list.map(s => `
-      <li><a href="#${s.id}" class="L-${s.level}" ${s.id === cur ? 'aria-current="page"' : ""} title="${s.level}">
-        ${icon(s.icon)}<span class="f-code">${esc(s.code)}</span><span class="f-title">${esc(s.title)}</span><i class="pip" aria-label="${s.level}"></i>
+      <li><a href="#${s.id}" class="L-${lv(s)}" ${s.id === cur ? 'aria-current="page"' : ""} title="${lv(s)}">
+        ${icon(s.icon)}<span class="f-code">${esc(s.code)}</span><span class="f-title">${esc(s.title)}</span><i class="pip" role="img" aria-label="${lv(s)}"></i>
       </a></li>`).join("");
   }
 
@@ -1513,7 +1575,7 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
         const tags = [n.critical ? '<span class="crit">Priority</span>' : "", n.when ? '<span class="tailor">Tailored</span>' : ""].filter(Boolean).join(" · ");
         html += `<div class="step${n.critical ? " critical" : ""}${isDone ? " done" : ""} ${rv()}" data-key="${esc(n.title)}" data-no="${no}">
           <div class="step-head"><span>Proc. ${no}${tags ? " · " + tags : ""}</span><span>${n.time ? esc(n.time) : ""}</span></div>
-          <label><input type="checkbox" id="p-${no}" ${isDone ? "checked" : ""}><span class="box" aria-hidden="true"></span><h4>${fill(n.title)}</h4></label>
+          <label><input type="checkbox" id="p-${no}" ${isDone ? "checked" : ""}><span class="box" aria-hidden="true"></span><h3>${fill(n.title)}</h3></label>
           <p>${fill(n.text)}</p></div>`;
       } else if (n.t === "decision") {
         html += `<div class="decision ${rv()}"><small>Checkpoint ${no}</small><strong>${fill(n.q)}</strong></div><div class="wire live ${rv()}"></div>`;
@@ -1654,13 +1716,13 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     const r = readiness();
     const sectors = cats.filter(c => c !== "All").map((c, i) => {
       const list = SCENARIOS.filter(s => s.category === c);
-      const top = list.reduce((m, s) => RANK[s.level] > RANK[m] ? s.level : m, "ROUTINE");
+      const top = list.reduce((m, s) => RANK[lv(s)] > RANK[m] ? lv(s) : m, "ROUTINE");
       const per = r.per.filter(x => x.s.category === c);
       const t = per.reduce((n, x) => n + x.t, 0), d = per.reduce((n, x) => n + x.d, 0), pct = t ? Math.round(d / t * 100) : 0;
       return `<section class="sector ${AREA[c] || ""} L-${top} hot" style="${AREA[c] ? "" : "grid-column: span 3"}">
         <div class="sec-h"><b>${esc(c)}</b><span>Sector ${String.fromCharCode(65 + i)} · ${list.length} files</span></div>
         <div class="sec-ready">Ready ${pct}% <span class="bar"><i style="width:${pct}%"></i></span></div>
-        <div class="sec-files">${list.map(s => `<a href="#${s.id}" class="L-${s.level}">${icon(s.icon)}${esc(s.title)}<i class="pip"></i></a>`).join("")}</div>
+        <div class="sec-files">${list.map(s => `<a href="#${s.id}" class="L-${lv(s)}">${icon(s.icon)}${esc(s.title)}<i class="pip"></i></a>`).join("")}</div>
       </section>`;
     }).join("");
     const el = $("dossier");
@@ -1793,7 +1855,7 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     $("sa-" + (SET.alarm === "standard" ? "std" : SET.alarm)).checked = true;
     $("sv-hum").value = SET.hum; $("so-hum").textContent = SET.hum;
     $("sv-fx").value = SET.fx; $("so-fx").textContent = SET.fx;
-    $("s-buzz").checked = SET.buzz;
+    $("s-buzz").checked = SET.buzz; $("s-live").checked = SET.live !== false;
     $("settings").hidden = false; $("sform").querySelector("input:checked").focus();
   }
   function closeSettings() { $("settings").hidden = true; lastFocus?.focus?.(); }
@@ -1807,9 +1869,282 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     if (t.id === "sv-hum") { SET.hum = +t.value; $("so-hum").textContent = t.value; Sound.levels(); }
     if (t.id === "sv-fx") { SET.fx = +t.value; $("so-fx").textContent = t.value; Sound.levels(); Sound.chirp(); }
     if (t.id === "s-buzz") { SET.buzz = t.checked; buzz(); }
+    if (t.id === "s-live") { SET.live = t.checked; if (!t.checked) { LIVE = { items: [], fetched: 0 }; store.set("live", LIVE); renderAlertBar(); route(false); } else fetchLive(true); }
     saveSet();
   });
+  $("s-check").addEventListener("click", () => { closeSettings(); fetchLive(true); });
   $("sform").addEventListener("submit", e => { e.preventDefault(); closeSettings(); log("Settings saved.", "sys", "WARDEN"); });
+
+  // ---------- live alerts (Met Office warnings via alerts/weather.json, Environment Agency floods direct) ----------
+  const MO_AREAS = { uk: "Whole UK", os: "Orkney & Shetland", he: "Highlands & Eilean Siar", gr: "Grampian", st: "Strathclyde", ta: "Central, Tayside & Fife",
+    dg: "SW Scotland, Lothian & Borders", ni: "Northern Ireland", wl: "Wales", nw: "North West England", ne: "North East England", yh: "Yorkshire & Humber",
+    wm: "West Midlands", em: "East Midlands", ee: "East of England", sw: "South West England", se: "London & South East England" };
+  const WEATHER_TARGETS = [
+    [/rain|flood/i, ["wim-018"]], [/wind|storm/i, ["wim-018", "wim-003"]], [/snow/i, ["wim-018", "wim-007", "wim-019"]],
+    [/ice/i, ["wim-007", "wim-019"]], [/thunder|lightning/i, ["wim-018", "wim-003"]], [/fog/i, ["wim-019"]], [/heat/i, ["wim-018", "wim-013"]]
+  ];
+  let LIVE = store.get("live", { items: [], fetched: 0 });
+  const lvRank = { ROUTINE: 0, DISRUPTIVE: 1, CRITICAL: 2 };
+  function liveFor(id) { return (LIVE.items || []).filter(a => a.targets.includes(id)); }
+  function lv(s) {
+    const a = liveFor(s.id).reduce((m, x) => lvRank[x.level] > lvRank[m] ? x.level : m, "ROUTINE");
+    return lvRank[a] > lvRank[s.level] ? a : s.level;
+  }
+  async function fetchLive(manual) {
+    if (SET.live === false) return;
+    const items = [], errors = [];
+    const area = P.weatherArea || (P.country === "UK" ? ({ wales: "wl", ni: "ni" })[P.region] : null);
+    if (P.country === "UK" && area) {
+      try {
+        const r = await fetch("alerts/weather.json", { cache: "no-store" });
+        if (!r.ok) throw new Error(r.status);
+        const j = await r.json();
+        for (const w of (j.regions && j.regions[area]) || []) {
+          const colour = /red/i.test(w.title) ? "red" : /amber/i.test(w.title) ? "amber" : "yellow";
+          const targets = [...new Set(WEATHER_TARGETS.filter(([re]) => re.test(w.title)).flatMap(([, t]) => t))];
+          if (targets.length) items.push({ kind: "weather", level: colour === "yellow" ? "DISRUPTIVE" : "CRITICAL", title: w.title, link: w.link || "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings", targets, source: "Met Office" });
+        }
+      } catch { errors.push("weather"); }
+    }
+    if (P.country === "UK" && P.region === "england" && P.lat != null) {
+      try {
+        const r = await fetch(`https://environment.data.gov.uk/flood-monitoring/id/floods?lat=${P.lat}&long=${P.lon}&dist=15&min-severity=3`, { cache: "no-store" });
+        if (!r.ok) throw new Error(r.status);
+        const j = await r.json();
+        for (const f of j.items || []) {
+          if (!(f.severityLevel >= 1 && f.severityLevel <= 3)) continue;
+          items.push({ kind: "flood", level: f.severityLevel <= 2 ? "CRITICAL" : "DISRUPTIVE", title: `${f.severity}: ${f.description}`,
+            link: "https://check-for-flooding.service.gov.uk/", targets: ["wim-018"], source: "Environment Agency" });
+        }
+      } catch { errors.push("flood"); }
+    }
+    const before = JSON.stringify(LIVE.items);
+    if (errors.length && !items.length && LIVE.items.length) { if (manual) log("Live feed unreachable. Showing the last alerts I saved.", "warn", "WARDEN"); return; }
+    LIVE = { items, fetched: Date.now() }; store.set("live", LIVE);
+    renderAlertBar();
+    if (JSON.stringify(items) !== before || manual) {
+      if (items.length) {
+        const raised = [...new Set(items.flatMap(a => a.targets))].map(id => byId[id]).filter(Boolean);
+        say(`Live feed: ${items.length} alert${items.length > 1 ? "s" : ""} in your area. Raised ${raised.map(s => `${s.code} to ${lv(s)}`).join(", ")}.`, "warn");
+        if (items.some(a => a.level === "CRITICAL")) Sound.alarm();
+      } else if (manual) log(errors.length ? "Couldn't reach the live feeds from here. They work on the installed site." : "Live feed checked. No warnings for your area.", "sys", "WARDEN");
+      route(false);
+    }
+  }
+  function renderAlertBar() {
+    const bar = $("alertbar"), items = LIVE.items || [];
+    if (!items.length) { bar.hidden = true; return; }
+    const top = items.slice().sort((a, b) => lvRank[b.level] - lvRank[a.level])[0];
+    bar.hidden = false;
+    bar.className = "alertbar-live L-" + top.level;
+    bar.innerHTML = `<span class="lab">Live alert</span><span class="txt">${esc(top.title)}${items.length > 1 ? ` (+${items.length - 1} more)` : ""}</span>
+      <span class="sp"></span><a href="#${top.targets[0]}">Open ${esc(byId[top.targets[0]].code)}</a><a href="${esc(top.link)}" target="_blank" rel="noopener">${esc(top.source)}</a>`;
+  }
+  function liveBanner(s) {
+    const a = liveFor(s.id); if (!a.length) return "";
+    return `<div class="livebox">${a.map(x => `<p><b>Threat level raised to ${x.level} by a live alert.</b> ${esc(x.title)} <a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.source)}</a></p>`).join("")}</div>`;
+  }
+  async function lookupPostcode(code) {
+    const c = code.replace(/\s+/g, "").toUpperCase();
+    if (!c) return null;
+    const out = c.length > 4 ? c.slice(0, -3) : c; // only the district (e.g. SW1A) leaves the device
+    const r = await fetch("https://api.postcodes.io/outcodes/" + encodeURIComponent(out));
+    if (!r.ok) throw new Error("not found");
+    const j = await r.json();
+    return { district: out, lat: +j.result.latitude.toFixed(3), lon: +j.result.longitude.toFixed(3) };
+  }
+
+  // ---------- scenario builder ----------
+  const LEVELS = ["ROUTINE", "DISRUPTIVE", "CRITICAL"];
+  const str = (v, max) => String(v == null ? "" : v).replace(/[\u0000-\u001f]/g, " ").slice(0, max);
+  function cleanNodes(nodes, depth, count) {
+    if (!Array.isArray(nodes) || depth > 6) return [];
+    const out = [];
+    for (const n of nodes) {
+      if (count.n++ > 200 || !n || typeof n !== "object") break;
+      if (n.t === "decision" && Array.isArray(n.branches)) {
+        const branches = n.branches.slice(0, 4).map(b => ({ label: str(b && b.label, 60) || "Option", flow: cleanNodes(b && b.flow, depth + 1, count) }));
+        if (branches.length >= 2) out.push({ t: "decision", q: str(n.q, 160) || "Question", branches });
+      } else out.push({ t: "step", title: str(n.title, 100) || "Untitled step", text: str(n.text, 600), ...(n.time ? { time: str(n.time, 12) } : {}), ...(n.critical ? { critical: true } : {}) });
+    }
+    return out;
+  }
+  function cleanScenario(o) {
+    if (!o || typeof o !== "object") throw new Error("That file doesn't contain a scenario.");
+    const flow = cleanNodes(o.flow, 0, { n: 0 });
+    if (!flow.length) throw new Error("The scenario has no steps.");
+    return {
+      title: str(o.title, 60) || "Untitled scenario", category: str(o.category, 30) || "Custom", level: LEVELS.includes(o.level) ? o.level : "DISRUPTIVE",
+      duration: str(o.duration, 40) || "Unknown", summary: str(o.summary, 600), keywords: str(o.keywords, 300), end: str(o.end, 160) || "Incident closed.",
+      prep: (Array.isArray(o.prep) ? o.prep : []).slice(0, 12).map(x => str(x, 140)).filter(Boolean), icon: ICONS[o.icon] ? o.icon : "receipt", flow
+    };
+  }
+  const customs = () => store.get("custom", []);
+  function installCustoms() {
+    for (let i = SCENARIOS.length - 1; i >= 0; i--) if (SCENARIOS[i].custom) { delete byId[SCENARIOS[i].id]; SCENARIOS.splice(i, 1); }
+    customs().forEach((c, i) => {
+      const s = { ...c, custom: true, code: "USR-" + String(i + 1).padStart(3, "0") };
+      SCENARIOS.push(s); byId[s.id] = s;
+    });
+    const cs = ["All", ...new Set(SCENARIOS.map(s => s.category))];
+    cats.length = 0; cats.push(...cs);
+    $("filters").innerHTML = cats.map(c => `<button class="chip" type="button" data-cat="${esc(c)}" aria-pressed="${c === cat}">${esc(c)}</button>`).join("");
+  }
+  let B = null; // { draft, id }
+  const blank = () => ({ title: "", category: "Home", level: "DISRUPTIVE", duration: "", summary: "", keywords: "", end: "", prep: [], icon: "receipt",
+    flow: [{ t: "step", title: "", text: "" }] });
+  const getAt = (obj, path) => path.split(".").filter(Boolean).reduce((o, k) => o[k], obj);
+  function nodeEditor(nodes, path, depth) {
+    return `<ol class="b-nodes">${nodes.map((n, i) => {
+      const p = `${path}.${i}`;
+      const ctl = `<span class="b-ctl"><button type="button" data-act="up" data-p="${p}" aria-label="Move up" ${i ? "" : "disabled"}>↑</button><button type="button" data-act="down" data-p="${p}" aria-label="Move down" ${i < nodes.length - 1 ? "" : "disabled"}>↓</button><button type="button" data-act="del" data-p="${p}" aria-label="Delete">✕</button></span>`;
+      if (n.t === "decision") return `<li class="b-node b-dec"><div class="b-row"><span class="b-tag">Checkpoint</span>${ctl}</div>
+        <label class="b-f"><span>Question</span><input type="text" data-p="${p}.q" value="${esc(n.q)}" maxlength="160"></label>
+        <div class="b-branches">${n.branches.map((b, bi) => `<div class="b-branch"><div class="b-row"><label class="b-f b-inline"><span>Answer ${String.fromCharCode(65 + bi)}</span><input type="text" data-p="${p}.branches.${bi}.label" value="${esc(b.label)}" maxlength="60"></label>
+          ${n.branches.length > 2 ? `<button type="button" class="b-small" data-act="delb" data-p="${p}.branches.${bi}">Remove answer</button>` : ""}</div>
+          ${nodeEditor(b.flow, `${p}.branches.${bi}.flow`, depth + 1)}</div>`).join("")}</div>
+        ${n.branches.length < 4 ? `<button type="button" class="b-small" data-act="addb" data-p="${p}">+ Answer</button>` : ""}</li>`;
+      return `<li class="b-node"><div class="b-row"><span class="b-tag">Step</span><label class="b-chk"><input type="checkbox" data-p="${p}.critical" ${n.critical ? "checked" : ""}> Priority</label>${ctl}</div>
+        <div class="b-grid"><label class="b-f"><span>Title</span><input type="text" data-p="${p}.title" value="${esc(n.title)}" maxlength="100"></label>
+        <label class="b-f b-time"><span>Time</span><input type="text" data-p="${p}.time" value="${esc(n.time || "")}" placeholder="T+0h" maxlength="12"></label></div>
+        <label class="b-f"><span>What to do</span><textarea data-p="${p}.text" rows="2" maxlength="600">${esc(n.text)}</textarea></label></li>`;
+    }).join("")}</ol>
+    <div class="b-add"><button type="button" class="b-small" data-act="add-step" data-p="${path}">+ Step</button>${depth < 4 ? `<button type="button" class="b-small" data-act="add-dec" data-p="${path}">+ Checkpoint</button>` : ""}</div>`;
+  }
+  function renderBuilder() {
+    current = null; usedKeys = new Set(); applyCalm(null);
+    const list = customs();
+    const el = $("dossier");
+    el.className = "dossier L-ROUTINE";
+    if (!B) {
+      el.innerHTML = `
+        <div class="d-top"><span>Scenario builder</span><span>${list.length} custom file${list.length === 1 ? "" : "s"}</span></div>
+        <h1 class="d-title" id="dt">Builder</h1>
+        <p class="assess">Write your own procedure, such as "Boiler fails at the rental flat". Custom files appear in the archive, on the map, and in WARDEN's search. Share them as files with friends.</p>
+        <div class="home-cta"><button type="button" class="guide-btn" data-b="new">New scenario</button>
+          <label class="tbtn b-file">Import file<input type="file" id="bImport" accept=".json,application/json"></label>
+          <button type="button" class="tbtn" data-b="paste">Paste text</button></div>
+        <div id="bPaste" hidden><label class="b-f"><span>Paste a shared scenario</span><textarea id="bPasteText" rows="5"></textarea></label><button type="button" class="tbtn" data-b="pasteGo">Import</button></div>
+        <h2 class="sec">Your files</h2>
+        ${list.length ? `<div class="rtable">${list.map((c, i) => `<div class="rrow b-item"><span class="f-code">USR-${String(i + 1).padStart(3, "0")}</span><a href="#${c.id}">${esc(c.title)}</a>
+          <span class="b-acts"><button type="button" class="b-small" data-b="edit" data-id="${c.id}">Edit</button><button type="button" class="b-small" data-b="export" data-id="${c.id}">Export</button></span></div>`).join("")}</div>`
+          : `<p class="note">No custom files yet. Start with "New scenario", or import one a friend sent you.</p>`}`;
+      return;
+    }
+    const d0 = B.draft;
+    el.innerHTML = `
+      <div class="d-top"><span>Scenario builder · ${B.id ? "editing" : "new file"}</span><span>Saved only in this browser</span></div>
+      <h1 class="d-title" id="dt">${esc(d0.title || "New scenario")}</h1>
+      <form id="bForm" class="b-form" novalidate>
+        <div class="b-grid3">
+          <label class="b-f"><span>Title</span><input type="text" data-p="title" value="${esc(d0.title)}" maxlength="60" placeholder="Boiler fails at the rental flat" required></label>
+          <label class="b-f"><span>Sector</span><input type="text" data-p="category" value="${esc(d0.category)}" maxlength="30" list="bCats"></label>
+          <label class="b-f"><span>Class</span><select data-p="level">${LEVELS.map(l => `<option ${l === d0.level ? "selected" : ""}>${l}</option>`).join("")}</select></label>
+          <label class="b-f"><span>Drawing</span><select data-p="icon">${Object.keys(ICONS).map(k => `<option ${k === d0.icon ? "selected" : ""}>${k}</option>`).join("")}</select></label>
+          <label class="b-f"><span>Duration</span><input type="text" data-p="duration" value="${esc(d0.duration)}" maxlength="40" placeholder="1 to 3 days"></label>
+          <label class="b-f"><span>Search words</span><input type="text" data-p="keywords" value="${esc(d0.keywords)}" maxlength="300" placeholder="boiler heating hot water"></label>
+        </div>
+        <datalist id="bCats">${cats.filter(c => c !== "All").map(c => `<option value="${esc(c)}">`).join("")}</datalist>
+        <label class="b-f"><span>Description (wrap text in [[double brackets]] to redact it)</span><textarea data-p="summary" rows="2" maxlength="600">${esc(d0.summary)}</textarea></label>
+        <h2 class="sec">Procedure</h2>
+        <div id="bTree">${nodeEditor(d0.flow, "flow", 0)}</div>
+        <label class="b-f"><span>Closing line</span><input type="text" data-p="end" value="${esc(d0.end)}" maxlength="160" placeholder="Heating restored."></label>
+        <label class="b-f"><span>Prepare in advance (one per line)</span><textarea id="bPrep" rows="3">${esc((d0.prep || []).join("\n"))}</textarea></label>
+        <div class="home-cta"><button type="submit" class="guide-btn">Save file</button><button type="button" class="tbtn" data-b="exportDraft">Export</button>
+          <button type="button" class="tbtn" data-b="cancel">Close</button>${B.id ? '<button type="button" class="btn-alert" data-b="delete">Delete</button>' : ""}</div>
+        <p class="note" id="bMsg" role="status"></p>
+      </form>
+      <h2 class="sec">Preview</h2>
+      <div class="chart"><div class="flow" id="bPreview"></div></div>`;
+    previewBuilder();
+  }
+  function previewBuilder() {
+    const box = $("bPreview"); if (!box || !B) return;
+    d = 0;
+    let html;
+    try { const c = cleanScenario(B.draft); html = fixSplit(`<div class="terminal">Incident detected</div><div class="wire"></div>${renderFlow(c.flow, "", [])}<div class="wire"></div><div class="terminal end">${esc(c.end)}</div>`); }
+    catch (e) { html = `<p class="note">${esc(e.message)}</p>`; }
+    box.innerHTML = html.replace(/ rv"/g, '"').replace(/<input type="checkbox"[^>]*>/g, "");
+  }
+  function bMsg(t) { const m = $("bMsg"); if (m) m.textContent = t; }
+  function exportScenario(sc) {
+    const data = JSON.stringify({ format: "what-if-machine/scenario", version: 1, scenario: cleanScenario(sc) }, null, 2);
+    const name = (sc.title || "scenario").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + ".wim.json";
+    try {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([data], { type: "application/json" })); a.download = name;
+      document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    } catch {}
+    navigator.clipboard?.writeText(data).then(() => log(`Exported ${name}. A copy is also on your clipboard to paste into a message.`, "sys", "WARDEN"),
+      () => log(`Exported ${name}.`, "sys", "WARDEN"));
+  }
+  function importText(text) {
+    let o;
+    try { o = JSON.parse(text); } catch { throw new Error("That isn't a What If Machine file."); }
+    const sc = cleanScenario(o && o.scenario ? o.scenario : o);
+    const list = customs();
+    if (list.length >= 50) throw new Error("You have 50 custom files already. Delete one first.");
+    sc.id = "usr-" + Math.random().toString(36).slice(2, 9);
+    list.push(sc); store.set("custom", list); installCustoms();
+    return sc;
+  }
+  $("dossier").addEventListener("input", e => {
+    if (!B || !e.target.dataset.p) return;
+    const p = e.target.dataset.p, parts = p.split("."), key = parts.pop();
+    const obj = getAt(B.draft, parts.join("."));
+    obj[key] = e.target.type === "checkbox" ? e.target.checked : e.target.value;
+    if (e.target.type === "checkbox" && !e.target.checked) delete obj[key];
+    if (p === "title") $("dt").textContent = e.target.value || "New scenario";
+    previewBuilder();
+  });
+  $("dossier").addEventListener("change", async e => {
+    if (e.target.id === "bPrep" && B) B.draft.prep = e.target.value.split("\n").map(x => x.trim()).filter(Boolean);
+    if (e.target.id === "bImport" && e.target.files[0]) {
+      try { const sc = importText(await e.target.files[0].text()); log(`Imported "${esc(sc.title)}".`, "sys", "WARDEN"); renderBuilder(); renderIndex(); }
+      catch (err) { log(esc(err.message), "warn", "WARDEN"); }
+    }
+  });
+  $("dossier").addEventListener("click", e => {
+    const t = e.target.closest("[data-b], [data-act]"); if (!t || location.hash !== "#builder") return;
+    const b = t.dataset.b, act = t.dataset.act;
+    if (b === "new") { B = { draft: blank(), id: null }; renderBuilder(); $("dossier").querySelector('[data-p="title"]').focus(); }
+    if (b === "edit") { const c = customs().find(x => x.id === t.dataset.id); B = { draft: JSON.parse(JSON.stringify(c)), id: c.id }; renderBuilder(); }
+    if (b === "export") exportScenario(customs().find(x => x.id === t.dataset.id));
+    if (b === "exportDraft") { try { exportScenario(B.draft); } catch (err) { bMsg(err.message); } }
+    if (b === "cancel") { B = null; renderBuilder(); }
+    if (b === "paste") { $("bPaste").hidden = false; $("bPasteText").focus(); }
+    if (b === "pasteGo") { try { const sc = importText($("bPasteText").value); log(`Imported "${esc(sc.title)}".`, "sys", "WARDEN"); renderBuilder(); renderIndex(); } catch (err) { log(esc(err.message), "warn", "WARDEN"); } }
+    if (b === "delete") {
+      if (t.dataset.confirm !== "1") { t.dataset.confirm = "1"; t.textContent = "Press again to delete"; return; }
+      store.set("custom", customs().filter(x => x.id !== B.id)); store.del(B.id); B = null; installCustoms(); renderBuilder(); renderIndex();
+    }
+    if (act) {
+      const p = t.dataset.p;
+      if (act === "add-step" || act === "add-dec") getAt(B.draft, p).push(act === "add-step" ? { t: "step", title: "", text: "" } :
+        { t: "decision", q: "", branches: [{ label: "Yes", flow: [{ t: "step", title: "", text: "" }] }, { label: "No", flow: [{ t: "step", title: "", text: "" }] }] });
+      else if (act === "addb") getAt(B.draft, p).branches.push({ label: "", flow: [{ t: "step", title: "", text: "" }] });
+      else {
+        const parts = p.split("."), i = +parts.pop(), arr = getAt(B.draft, parts.join("."));
+        if (act === "del" || act === "delb") { if (act === "del" && arr.length === 1 && parts.join(".") === "flow") return bMsg("A scenario needs at least one step."); arr.splice(i, 1); }
+        if (act === "up" && i > 0) [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]];
+        if (act === "down" && i < arr.length - 1) [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]];
+      }
+      $("bTree").innerHTML = nodeEditor(B.draft.flow, "flow", 0); previewBuilder();
+    }
+  });
+  $("dossier").addEventListener("submit", e => {
+    if (e.target.id !== "bForm") return;
+    e.preventDefault();
+    let sc;
+    try { sc = cleanScenario(B.draft); } catch (err) { return bMsg(err.message); }
+    if (!B.draft.title.trim()) { bMsg("Give the scenario a title first."); return $("dossier").querySelector('[data-p="title"]').focus(); }
+    const list = customs();
+    if (B.id) { sc.id = B.id; list[list.findIndex(x => x.id === B.id)] = sc; }
+    else { sc.id = "usr-" + Math.random().toString(36).slice(2, 9); list.push(sc); B.id = sc.id; }
+    store.set("custom", list); installCustoms(); renderIndex();
+    bMsg("Saved. It's now in the archive and on the map."); Sound.chirp();
+    log(`Custom file "${esc(sc.title)}" saved.`, "sys", "WARDEN");
+  });
 
   // ---------- dossier ----------
   let current = null;
@@ -1820,7 +2155,7 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     const done = store.get(s.id, []);
     const tailored = countTailored(flowData);
     const flow = fixSplit(`<div class="terminal ${rv()}">Incident detected</div><div class="wire live ${rv()}"></div>${renderFlow(flowData, "", done)}<div class="wire live ${rv()}"></div><div class="terminal end ${rv()}">${esc(s.end)}</div>`);
-    const crit = s.level === "CRITICAL";
+    const crit = lv(s) === "CRITICAL";
     const deps = ["children", "pets", "carer"].filter(k => P[k]).map(k => ({ children: "Children", pets: "Pets", carer: "Carer" })[k]);
     const prep = prepHtml(s);
     const card = crit ? emergencyCard() : "";
@@ -1828,16 +2163,17 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     const sources = [...usedKeys].filter(k => links[k]).map(k => `<li><a href="${esc(links[k])}" target="_blank" rel="noopener">${esc(links[k].replace(/^https:\/\/(www\.)?/, "").replace(/\/$/, ""))}</a></li>`);
     const uniq = [...new Set(sources)];
     const el = $("dossier");
-    el.className = "dossier L-" + s.level;
+    el.className = "dossier L-" + lv(s);
     el.innerHTML = `
       ${crit ? `<div class="alertbar">Critical incident · ${s.quiet ? "you don't have to do this alone" : "emergency services first"}</div>` : ""}
       <div class="d-top"><span>File ${esc(s.code)} · ${esc(s.category)}</span><span>Contingency protocol · eyes only</span></div>
       <div class="d-head"><span class="ico-frame">${icon(s.icon)}<small>FIG. ${esc(s.code.slice(-3))}</small></span>
-        <div><h1 class="d-title" id="dt">${esc(s.title)}</h1><span class="stamp">Class: ${s.level}</span></div></div>
+        <div><h1 class="d-title" id="dt">${esc(s.title)}</h1><span class="stamp">Class: ${lv(s)}</span></div></div>
       ${card}
+      ${liveBanner(s)}
       <dl class="meta">
         <div><dt>Item</dt><dd>${esc(s.code)}</dd></div>
-        <div><dt>Incident class</dt><dd class="lv">${s.level}</dd></div>
+        <div><dt>Incident class</dt><dd class="lv">${lv(s)}</dd></div>
         <div><dt>Est. duration</dt><dd>${esc(s.duration)}</dd></div>
         <div><dt>Procedures</dt><dd>${current.total}</dd></div>
       </dl>
@@ -2006,13 +2342,16 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
   function openProfile() {
     lastFocus = document.activeElement;
     $("pf-country").value = P.country; $("pf-region").value = P.region || "england";
-    $("pf-region-wrap").hidden = P.country !== "UK";
+    $("pf-region-wrap").hidden = P.country !== "UK"; $("pf-alerts-wrap").hidden = P.country !== "UK";
+    $("pf-postcode").value = P.district || "";
+    $("pf-area").value = P.weatherArea || ({ wales: "wl", ni: "ni" })[P.region] || "";
     (document.querySelector(`input[name=budget][value="${P.budget}"]`) || $("pf-b-some")).checked = true;
     ["children", "pets", "carer"].forEach(k => { $("pf-" + k).checked = !!P[k]; });
     [0, 1, 2].forEach(i => { const c = (P.contacts || [])[i] || {}; $(`pf-c${i + 1}n`).value = c.name || ""; $(`pf-c${i + 1}p`).value = c.phone || ""; });
     $("overlay").hidden = false; $("pf-country").focus(); Sound.open();
   }
-  $("pf-country").addEventListener("change", () => { $("pf-region-wrap").hidden = $("pf-country").value !== "UK"; });
+  $("pf-area").insertAdjacentHTML("beforeend", Object.entries(MO_AREAS).filter(([k]) => k !== "uk").map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join(""));
+  $("pf-country").addEventListener("change", () => { $("pf-region-wrap").hidden = $("pf-alerts-wrap").hidden = $("pf-country").value !== "UK"; });
   function closeProfile() { $("overlay").hidden = true; if (lastFocus) lastFocus.focus?.(); }
   $("profileBtn").addEventListener("click", openProfile);
   $("log").addEventListener("click", e => { if (e.target.closest("[data-profile]")) openProfile(); });
@@ -2037,6 +2376,11 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
       children: $("pf-children").checked, pets: $("pf-pets").checked, carer: $("pf-carer").checked,
       contacts: [1, 2, 3].map(i => ({ name: $(`pf-c${i}n`).value.trim(), phone: $(`pf-c${i}p`).value.trim() })).filter(c => c.name || c.phone)
     };
+    P.weatherArea = $("pf-area").value || "";
+    const pc = $("pf-postcode").value.trim(), old = store.get("profile", {});
+    if (pc && pc.replace(/\s/g, "").toUpperCase().startsWith(old.district || "\u0000") && old.lat != null) Object.assign(P, { district: old.district, lat: old.lat, lon: old.lon });
+    else if (pc) lookupPostcode(pc).then(r => { Object.assign(P, r); store.set("profile", P); fetchLive(true); })
+      .catch(() => log("I couldn't look up that postcode district. Check it, or try again on the installed site.", "warn", "WARDEN"));
     store.set("profile", P); hasProfile = true;
     closeProfile(); Sound.chirp();
     route(true);
@@ -2060,7 +2404,7 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
         else if (w.length > 3 && kws.some(k => k.length > 3 && (k.startsWith(w) || w.startsWith(k)))) { score += 1; hits.push(w); }
       }
       return { s, score, hits };
-    }).filter(r => r.score > 0).sort((a, b) => b.score - a.score);
+    }).filter(r => r.score > 0).sort((a, b) => b.score - a.score || (b.s.custom ? 1 : 0) - (a.s.custom ? 1 : 0));
   }
   $("ask").addEventListener("submit", async e => {
     e.preventDefault();
@@ -2072,7 +2416,7 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     if (!res.length) { await say("No file on record matches that description. Try different words, or browse the archive.", "warn"); return; }
     const top = res[0];
     if (top.s.matchNote) await say(plain(top.s.matchNote), "warn");
-    else if (top.s.level === "CRITICAL") await say(`Critical match. If anyone is in danger, call ${C().emergency} now.`, "warn");
+    else if (lv(top.s) === "CRITICAL") await say(`Critical match. If anyone is in danger, call ${C().emergency} now.`, "warn");
     await say(`Match: ${top.s.code} ${top.s.title.toUpperCase()} (matched on: ${top.hits.join(", ")}). Opening file.`);
     if (res.length > 1) {
       const alt = res.slice(1, 3).map(r => `<button type="button" class="opt" data-go="${r.s.id}">${r.s.code} ${esc(r.s.title)}</button>`).join(" · ");
@@ -2085,12 +2429,26 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
   // ---------- routing ----------
   function currentId() { const h = location.hash.slice(1); return byId[h] ? h : null; }
   setView("main");
+  $("skip").addEventListener("click", () => { setView("main"); $("dossier").focus(); });
+  addEventListener("keydown", e => {
+    if (e.key !== "Tab") return;
+    const box = [$("guide"), $("settings"), $("overlay")].find(x => !x.hidden);
+    if (!box) return;
+    const f = [...box.querySelectorAll('button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])')].filter(x => !x.disabled && x.offsetParent !== null);
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
   function go(id) { if (location.hash.slice(1) === id) route(true); else location.hash = id; }
   function route(animate) {
     const id = currentId();
     if (location.hash === "#readiness") renderReadiness(animate);
+    else if (location.hash === "#builder") renderBuilder();
     else if (id) renderDossier(byId[id], animate);
     else renderHome(animate);
+    if (location.hash !== "#builder") B = null;
+    document.title = (id ? byId[id].title : location.hash === "#readiness" ? "Readiness" : location.hash === "#builder" ? "Scenario builder" : "Facility map") + " · What If Machine";
     renderIndex(); markTabs();
   }
   window.addEventListener("hashchange", () => {
@@ -2098,7 +2456,8 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     setView("main");
     const s = byId[currentId()];
     if (location.hash === "#readiness") log(`Readiness audit compiled: ${readiness().pct}% prepared.`, "sys", "WARDEN");
-    else if (s) log(`File ${s.code} retrieved. Class ${s.level}.`, "sys", "WARDEN");
+    else if (s) log(`File ${s.code} retrieved. Class ${lv(s)}.`, "sys", "WARDEN");
+    else if (location.hash === "#builder") log("Scenario builder open.", "sys", "WARDEN");
     else log("Facility map loaded.", "sys", "WARDEN");
     if (innerWidth <= 720) scrollTo(0, 0);
     else if (innerWidth <= 860) $("dossier").scrollIntoView({ block: "start", behavior: RM ? "auto" : "smooth" });
@@ -2149,7 +2508,11 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     profileNudge();
   }
 
-  renderActiveBar();
+  installCustoms();
+  renderActiveBar(); renderAlertBar();
+  setTimeout(() => fetchLive(false), 2500);
+  setInterval(() => fetchLive(false), 15 * 60 * 1000);
+  addEventListener("online", () => fetchLive(false));
   if (document.querySelector('link[rel="manifest"]') && "serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js").catch(() => {});
   }
