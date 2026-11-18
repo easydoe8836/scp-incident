@@ -1,0 +1,35 @@
+name: Refresh weather warnings
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: alerts
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scripts/fetch-alerts.mjs
+      - name: Commit if warnings changed
+        run: |
+          if git diff --quiet alerts/weather.json; then
+            echo "No change"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add alerts/weather.json
+            git commit -m "Update weather warnings"
+            git push
+          fi
