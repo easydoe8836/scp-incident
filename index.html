@@ -1,0 +1,1743 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#13110d">
+<meta name="description" content="Step-by-step plans for real-life emergencies.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+<title>What If Machine</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+
+<!--
+  ============================================================
+  SCENARIO DATA — edit this block to add or change scenarios.
+  ============================================================
+  Each scenario:
+    id        unique slug, used in the link (#wim-013)
+    code      file number shown on the dossier
+    title     what happened, in plain words
+    keywords  words people might type to describe it (the AI matches against these)
+    category  "Work & money" | "Home" | "Tech" | "Travel" | "Health" | "Life" (any string works; filters build themselves)
+    level     "ROUTINE" | "DISRUPTIVE" | "CRITICAL"
+    duration  rough time to resolve
+    summary   flavour description. Wrap text in [[double brackets]] to redact it (click to reveal).
+    flow      ordered list of nodes:
+      { t: "step", title, text, time?, critical?, when? }
+      Text can use {placeholders} from COUNTRIES below, e.g. "Call {emergency}".
+      when (optional, on a node or a branch) shows it only for matching profiles:
+        { country: ["UK"] } { notCountry: ["UK"] } { region: ["scotland"] } (UK nations: england, scotland, wales, ni)
+        { budget: ["tight"] } { children: true } { pets: true } { carer: true }
+      A decision left with one matching branch collapses into that branch's steps.
+      { t: "decision", q, branches: [ { label, flow: [ ...nodes ] } ] }
+    end       closing note shown at the bottom of the flowchart
+    prep      optional list of things to do in advance (feeds the readiness score)
+    quiet     optional: true skips the alarm and glitch effects (used for sensitive files)
+    matchNote optional line WARDEN says first when this file is matched
+-->
+<script>
+const SCENARIOS = [
+  {
+    id: "wim-001", keywords: "job fired laid off layoff redundant redundancy unemployed work income sacked terminated", code: "WIM-001", title: "Lost job", category: "Work & money",
+    level: "DISRUPTIVE", duration: "2 to 12 weeks",
+    prep: ["Build an emergency fund covering 3 months of essentials", "Keep copies of your contract and recent payslips outside work systems", "Keep your CV and profiles up to date", "Know when your notice period and any work benefits end"],
+    summary: "Subject's primary income stream has been terminated with little or no warning. Observed effects include sudden budget collapse, [[mild existential dread]], and an unusually empty calendar. Containment depends on fast paperwork and an honest look at the numbers.",
+    flow: [
+      { t: "step", time: "T+0h", critical: true, title: "Don't sign anything on the spot", text: "Take any severance or release agreement home. You normally have time to review it. Ask for the terms in writing." },
+      { t: "step", time: "T+0h", title: "Collect the paperwork", text: "Get your termination letter, final pay date, unused leave payout, and the date your benefits end. Copy your payslips and contract off the work laptop before access is cut." },
+      { t: "step", time: "T+24h", title: "File for unemployment support", text: "{jobHelp}" },
+      { t: "step", when: { budget: ["tight"] }, critical: true, title: "Cover this month first", text: "With little in savings, list what's due in the next 30 days and call those providers now, before you miss anything." },
+      { t: "step", time: "T+48h", title: "Run a cash triage", text: "List your cash, upcoming bills, and minimum payments. Work out how many weeks you can cover essentials: housing, food, utilities, insurance, transport." },
+      { t: "decision", q: "Can you cover 3 months of essentials?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", title: "Hold the line", text: "Pause non-essential subscriptions but keep your savings for essentials. Avoid cashing out retirement accounts early; penalties and tax eat a large share." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", critical: true, title: "Call creditors before you miss a payment", text: "Contact your landlord or lender, utilities, and card issuers. Ask for hardship plans, deferrals, or reduced payments. They have more options before you fall behind." },
+          { t: "step", title: "Find bridge income", text: "Temp agencies, shift work, or freelance gigs buy time while you search for the right role." }
+        ]}
+      ]},
+      { t: "step", time: "T+1w", title: "Close the health coverage gap", text: "Find out exactly when your work coverage ends. Compare continuation coverage with other plans before the gap opens." },
+      { t: "decision", q: "Do you suspect the dismissal was unlawful or wages are unpaid?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", critical: true, title: "Talk to an employment advisor", text: "Deadlines for claims can be short, sometimes weeks. Many advisors and unions offer a free first consultation." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", title: "Line up references", text: "Ask managers and colleagues for references and recommendations now, while your work is fresh in their minds." }
+        ]}
+      ]},
+      { t: "step", time: "T+1w", title: "Rebuild the search kit", text: "Update your CV, portfolio, and profiles. Tell your network you're looking. A large share of roles are filled through people, not job boards." },
+      { t: "step", title: "Set a daily routine", text: "Treat the search like a part-time job: fixed hours, a weekly application target, and real time off." }
+    ],
+    end: "Incident downgraded on acceptance of a new offer."
+  },
+  {
+    id: "wim-002", keywords: "internet wifi wi-fi online router modem broadband offline connection network", code: "WIM-002", title: "No internet", category: "Tech",
+    level: "ROUTINE", duration: "10 minutes to 2 days",
+    prep: ["Save your provider's support number and account number offline", "Know how to turn on your phone's hotspot", "Label the modem and router so you know which is which"],
+    summary: "Household network has stopped responding. Occupants report a sudden awareness of their surroundings, and in one case, [[a conversation with a family member]]. Most incidents resolve with a restart.",
+    flow: [
+      { t: "step", time: "T+0m", title: "Test a second device", text: "Try another phone or laptop on the same Wi-Fi to see whether the problem is the device or the connection." },
+      { t: "decision", q: "Is every device offline?", branches: [
+        { label: "Only one device", flow: [
+          { t: "step", title: "Reset that device's connection", text: "Turn Wi-Fi off and on, forget and rejoin the network, then restart the device." },
+          { t: "step", title: "Check the usual suspects", text: "Airplane mode, a VPN, or a mobile data cap can all look like an outage." }
+        ]},
+        { label: "All devices", flow: [
+          { t: "step", title: "Read the router lights", text: "A red or blinking internet (WAN) light usually means the problem is upstream of your home." },
+          { t: "step", title: "Power-cycle the equipment", text: "Unplug the modem and router. Wait 30 seconds. Plug in the modem first, wait 2 minutes, then the router." },
+          { t: "step", title: "Check for an outage", text: "Use mobile data to check your provider's app or status page." }
+        ]}
+      ]},
+      { t: "decision", q: "Is the provider reporting an outage?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", title: "Tether and wait", text: "Use your phone's hotspot for anything urgent. Note how long the outage lasts, since you may qualify for a bill credit." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", title: "Check the cables", text: "Make sure the line cable into the modem is seated firmly and isn't kinked or chewed." },
+          { t: "step", title: "Call your provider", text: "Have your account number ready and list everything you already tried. It skips half the script." }
+        ]}
+      ]}
+    ],
+    end: "Connection restored. Resume scrolling at your own risk."
+  },
+  {
+    id: "wim-003", keywords: "power outage electricity blackout lights electric breaker fuse", code: "WIM-003", title: "Power outage", category: "Home",
+    level: "DISRUPTIVE", duration: "1 hour to 3 days",
+    prep: ["Keep torches and spare batteries where you can find them in the dark", "Keep a charged power bank", "Save the power cut number for your area in your phone", "Find your breaker panel and label the switches"],
+    summary: "Electrical supply to the residence has ceased. The refrigerator has begun a slow countdown. Personnel are advised that candles are [[considerably more flammable than they look]].",
+    flow: [
+      { t: "step", time: "T+0m", title: "Look outside", text: "Check whether neighbours and street lights are dark too." },
+      { t: "decision", q: "Is it only your home?", branches: [
+        { label: "Only mine", flow: [
+          { t: "step", title: "Check the breaker panel", text: "Look for a tripped breaker or blown fuse. Reset a tripped breaker once." },
+          { t: "step", critical: true, title: "If it trips again, stop", text: "A breaker that keeps tripping is a fault. Unplug everything on that circuit and call an electrician." }
+        ]},
+        { label: "Whole street", flow: [
+          { t: "step", title: "Report it", text: "{powerCut}" }
+        ]}
+      ]},
+      { t: "step", time: "T+15m", title: "Unplug sensitive electronics", text: "Protects them from a surge when power returns. Leave one lamp switched on so you know when it's back." },
+      { t: "step", time: "T+15m", title: "Keep the fridge closed", text: "A closed fridge stays cold for about 4 hours. A full freezer holds for about 48 hours." },
+      { t: "step", critical: true, title: "Use safe light and heat", text: "Use torches instead of candles. Never run a generator, grill, or camp stove indoors or in a garage: carbon monoxide kills without warning." },
+      { t: "step", title: "Save phone battery", text: "Turn on low power mode, dim the screen, and use a power bank or car charger." },
+      { t: "decision", q: "Has it been out for more than 4 hours?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", critical: true, title: "Triage the food", text: "Throw out meat, dairy, and leftovers that sat above 4 °C (40 °F) for more than 2 hours. When in doubt, throw it out." },
+          { t: "step", title: "Check on neighbours", text: "Especially older people and anyone who relies on powered medical equipment." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", title: "Restore gradually", text: "When power returns, plug devices back in one at a time." }
+        ]}
+      ]}
+    ],
+    end: "Power restored. Reset the clocks on the oven and microwave."
+  },
+  {
+    id: "wim-004", keywords: "wallet purse cards card credit debit lost id license licence money", code: "WIM-004", title: "Lost wallet", category: "Work & money",
+    level: "DISRUPTIVE", duration: "1 day to 3 weeks",
+    prep: ["Write down your bank's card-loss numbers somewhere other than your wallet", "Turn on card freeze in your banking apps", "Carry only the cards you need", "Keep photos of your ID stored securely"],
+    summary: "Subject's wallet, including payment cards and identification, is no longer in subject's possession. Its current location is [[almost certainly the last place you looked]]. Speed matters more than searching.",
+    flow: [
+      { t: "step", time: "T+0m", title: "Retrace and call ahead", text: "Call the last few places you visited. Shops, cafés, and transit lines often hold found wallets." },
+      { t: "step", time: "T+15m", critical: true, title: "Freeze every card", text: "Use your banking apps to freeze or lock each card, then report them lost and order replacements." },
+      { t: "step", title: "Scan recent transactions", text: "Look for anything you didn't make and report it to the bank straight away." },
+      { t: "decision", q: "Do you think it was stolen?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", title: "File a police report", text: "Keep the report number. Banks and insurers often ask for it." },
+          { t: "step", title: "Guard against identity theft", text: "Consider a credit freeze or fraud alert with the credit bureaus, since your ID is out there too." }
+        ]},
+        { label: "Probably lost", flow: [
+          { t: "step", title: "Leave your details", text: "Give your contact details to lost-and-found desks along your route." }
+        ]}
+      ]},
+      { t: "step", time: "T+1d", title: "Replace your ID", text: "Order replacement driving licence, ID card, and insurance cards through the official issuing sites." },
+      { t: "step", time: "T+1w", title: "Update automatic payments", text: "Switch subscriptions and bills to the new card numbers before they bounce." }
+    ],
+    end: "Contents replaced. Consider carrying fewer cards."
+  },
+  {
+    id: "wim-005", keywords: "phone mobile cell iphone android stolen lost device", code: "WIM-005", title: "Phone lost or stolen", category: "Tech",
+    level: "CRITICAL", duration: "1 hour to 1 week",
+    prep: ["Turn on Find My or Find My Device", "Turn on automatic cloud backups", "Set a strong passcode, not a 4-digit one", "Write down your carrier's number and your phone's IMEI"],
+    summary: "Subject's primary communication device has gone missing. It carries [[every password subject has ever saved]] and the keys to most of their accounts. Lock it down first, search second.",
+    flow: [
+      { t: "step", time: "T+0m", title: "Locate it", text: "Use Find My (Apple) or Find My Device (Google) from another phone or computer." },
+      { t: "decision", q: "Is it somewhere you recognise and can safely reach?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", title: "Play a sound and retrieve it", text: "Trigger the sound, go get it, and you're done." }
+        ]},
+        { label: "No or unknown", flow: [
+          { t: "step", critical: true, title: "Mark it as lost", text: "Lock it remotely and add a message with a contact number." },
+          { t: "step", critical: true, title: "Don't confront anyone", text: "If it's moving or at a stranger's address, give the location to the police instead of going yourself." }
+        ]}
+      ]},
+      { t: "step", time: "T+30m", critical: true, title: "Change key passwords", text: "Email first, since it resets everything else. Then banking and social accounts. Sign the lost phone out of each." },
+      { t: "step", time: "T+1h", title: "Call your carrier", text: "Suspend the line and block the SIM so nobody can receive your text codes. Ask them to block the phone's IMEI." },
+      { t: "decision", q: "Did you get it back within a day?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", title: "Re-secure it", text: "Check for new apps or settings you didn't make, then update the passcode." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", title: "Erase it remotely", text: "Wipe the device, then file the police or insurance claim." },
+          { t: "step", title: "Restore from backup", text: "Set up the replacement from your cloud backup." }
+        ]}
+      ]}
+    ],
+    end: "Device secured. Turn on automatic backups if they weren't on."
+  },
+  {
+    id: "wim-006", keywords: "locked lockout keys key door home house apartment", code: "WIM-006", title: "Locked out of home", category: "Home",
+    level: "ROUTINE", duration: "30 minutes to 3 hours",
+    prep: ["Leave a spare key with someone you trust", "Save a licensed locksmith's number", "Fit a coded key safe if you live alone"],
+    summary: "Subject is on the wrong side of their own front door. Keys were last seen [[on the kitchen counter, in plain view, mocking them]].",
+    flow: [
+      { t: "step", time: "T+0m", title: "Try every entrance", text: "Check other doors and ground-floor windows you can reach safely. Don't climb." },
+      { t: "step", title: "Call key holders", text: "Housemates, family, a trusted neighbour, your landlord, or the building manager." },
+      { t: "decision", q: "Is anyone or anything at risk inside?", branches: [
+        { label: "Yes (child, pet, stove on)", flow: [
+          { t: "step", critical: true, title: "Call {emergency}", text: "Say exactly who or what is at risk. They can force entry." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", title: "Call a licensed locksmith", text: "Get a full quote before they start and ask for proof of licence. Have ID with your address ready." }
+        ]}
+      ]},
+      { t: "step", title: "Prevent a repeat", text: "Leave a spare with someone you trust or fit a coded key safe." }
+    ],
+    end: "Back inside. Put the keys somewhere boring and consistent."
+  },
+  {
+    id: "wim-007", keywords: "car breakdown broke down vehicle tire tyre battery road highway motorway", code: "WIM-007", title: "Car breakdown", category: "Travel",
+    level: "CRITICAL", duration: "1 to 4 hours",
+    prep: ["Save your breakdown cover number in your phone", "Keep a warning triangle, hi-vis vest, and torch in the car", "Check your tyres, including the spare, every month", "Keep water and a warm layer in the car"],
+    summary: "Vehicle has stopped functioning while in motion. The primary danger is [[other drivers]], not the car itself. Visibility and distance from traffic come first.",
+    flow: [
+      { t: "step", time: "T+0m", critical: true, title: "Get off the road", text: "Signal, pull as far onto the shoulder or verge as you can, and switch on your hazard lights." },
+      { t: "decision", q: "Is it safe to stay in the car?", branches: [
+        { label: "No (fast road, tight shoulder)", flow: [
+          { t: "step", critical: true, title: "Get out away from traffic", text: "Exit on the side away from the road. Stand behind a barrier, well back from the car." }
+        ]},
+        { label: "Yes", flow: [
+          { t: "step", title: "Stay buckled in", text: "Keep doors locked and hazards on while you wait." }
+        ]}
+      ]},
+      { t: "step", title: "Make yourself visible", text: "Put on a reflective vest. Place a warning triangle behind the car only if you can do so without walking in traffic." },
+      { t: "step", time: "T+10m", title: "Call for help", text: "Call roadside assistance or your insurer. Share a map pin or the nearest marker post or exit." },
+      { t: "decision", q: "Is it a simple fix you know how to do?", branches: [
+        { label: "Yes (flat, dead battery)", flow: [
+          { t: "step", title: "Fix it only if safe", text: "Only work on the side away from traffic. On a motorway shoulder, wait for help instead." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", title: "Wait for a professional", text: "Don't open the bonnet if there's smoke or steam." }
+        ]}
+      ]},
+      { t: "step", title: "Keep records", text: "Photos, tow receipts, and repair invoices for your insurer." }
+    ],
+    end: "Vehicle recovered. Book the service you've been putting off."
+  },
+  {
+    id: "wim-008", keywords: "water leak pipe burst flood flooding plumbing ceiling drip", code: "WIM-008", title: "Water leak or burst pipe", category: "Home",
+    level: "CRITICAL", duration: "1 day to 2 weeks",
+    prep: ["Find your stopcock and check it turns", "Know where your fuse box is", "Check your home insurance covers escape of water", "Save a plumber's number"],
+    summary: "Uncontained water is entering the living space. Every minute adds to the damage. [[The ceiling bulge is not a design feature.]]",
+    flow: [
+      { t: "step", time: "T+0m", critical: true, title: "Shut off the water", text: "Close the main stopcock. It's usually near the water meter, under the kitchen sink, or where the pipe enters the building." },
+      { t: "step", time: "T+0m", critical: true, title: "Make electrics safe", text: "If water is near sockets, lights, or appliances, switch off that circuit at the panel, but only if you can reach it without standing in water." },
+      { t: "step", time: "T+15m", title: "Contain the spread", text: "Buckets under drips, towels at doorways. Move valuables, electronics, and rugs out of the area." },
+      { t: "decision", q: "Do you rent?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", title: "Notify your landlord in writing", text: "Call, then follow up by text or email so there's a timestamped record." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", title: "Call a plumber", text: "Ask for an emergency call-out if water is still escaping." }
+        ]}
+      ]},
+      { t: "step", title: "Photograph everything", text: "Document the damage before you clean up. Insurers want to see it as found." },
+      { t: "step", time: "T+24h", title: "Call your insurer", text: "Report the claim early and ask what they cover for drying and repairs." },
+      { t: "step", time: "T+48h", critical: true, title: "Dry it out within 48 hours", text: "Fans, a dehumidifier, and open windows. Mould starts after about two days." }
+    ],
+    end: "Leak contained. Learn where your stopcock is before you need it."
+  },
+  {
+    id: "wim-009", keywords: "hacked hack account password compromised scam login breach", code: "WIM-009", title: "Account hacked", category: "Tech",
+    level: "CRITICAL", duration: "1 hour to 2 weeks",
+    prep: ["Use a password manager with unique passwords", "Turn on two-factor sign-in for your email first", "Save your account recovery codes somewhere safe", "Check that your recovery email and phone are current"],
+    summary: "An unauthorised party has gained access to one of subject's online accounts. Signs include unfamiliar logins, messages subject did not send, and [[an alarming interest in crypto]].",
+    flow: [
+      { t: "decision", q: "Can you still log in?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", time: "T+0m", critical: true, title: "Change the password now", text: "Use a long, unique password, ideally generated by a password manager." },
+          { t: "step", title: "Sign out every other session", text: "Most services have a \"sign out everywhere\" option in security settings." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", time: "T+0m", critical: true, title: "Use the official recovery flow", text: "Go through the service's own site or app only. Ignore anyone who messages you offering to recover it." }
+        ]}
+      ]},
+      { t: "step", critical: true, title: "Turn on two-factor sign-in", text: "Use an authenticator app or a passkey. Both are stronger than text-message codes." },
+      { t: "step", title: "Audit recovery settings", text: "Check the recovery email and phone, mail forwarding rules, and connected apps. Attackers plant these to get back in." },
+      { t: "step", title: "Change reused passwords", text: "Any other account that shared that password is exposed too." },
+      { t: "step", title: "Warn your contacts", text: "Tell them to ignore recent messages from you asking for money or codes." },
+      { t: "decision", q: "Is money or a card linked to the account?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", critical: true, title: "Call your bank", text: "Report possible fraud and ask about replacing the card." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", title: "Review the activity log", text: "Check what was viewed or changed so you know what else to fix." }
+        ]}
+      ]}
+    ],
+    end: "Account secured. Turn on two-factor sign-in everywhere else, too."
+  },
+  {
+    id: "wim-010", keywords: "flight plane missed airport airline gate travel", code: "WIM-010", title: "Missed flight", category: "Travel",
+    level: "DISRUPTIVE", duration: "2 hours to 2 days",
+    prep: ["Turn on flight alerts in the airline app", "Buy travel insurance when you book", "Save the airline's support number", "Leave extra time for security at busy airports"],
+    summary: "Aircraft has departed without subject on board. Subject is located [[at gate B47, staring]]. Options shrink with every hour, so move quickly.",
+    flow: [
+      { t: "step", time: "T+0m", critical: true, title: "Contact the airline right away", text: "Go to the desk and open the app at the same time. Some airlines rebook late passengers onto the next flight cheaply if they act quickly." },
+      { t: "decision", q: "Was it the airline's fault?", branches: [
+        { label: "Yes (delay, cancelled connection)", flow: [
+          { t: "step", title: "Ask for free rebooking", text: "If the airline caused the miss, rebooking should be at no cost." },
+          { t: "step", title: "Ask about care and compensation", text: "Meals, a hotel, and in some regions cash compensation. The rules depend on where you're flying." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", title: "Compare options", text: "Standby, a paid change, or a new ticket on another airline. Check prices before you accept the first offer." }
+        ]}
+      ]},
+      { t: "step", critical: true, title: "Protect the rest of your trip", text: "If you miss one leg, airlines may cancel your later flights. Tell them you still plan to fly those." },
+      { t: "step", title: "Update onward plans", text: "Let your hotel, car hire, and anyone meeting you know about the new time." },
+      { t: "step", title: "Check your travel insurance", text: "Many policies cover extra costs from missed departures. Keep every receipt." }
+    ],
+    end: "Rebooked. Leave earlier next time."
+  },
+  {
+    id: "wim-011", keywords: "laptop computer pc died dead broken spill coffee data backup", code: "WIM-011", title: "Laptop died", category: "Tech",
+    level: "DISRUPTIVE", duration: "1 day to 2 weeks",
+    prep: ["Turn on automatic cloud backups", "Keep a second backup on an external drive", "Keep drinks away from the keyboard", "Make sure two-factor codes work on more than one device"],
+    summary: "Subject's primary work device has stopped responding. Last known actions include [[a full cup of coffee]]. The machine can be replaced; the files may not.",
+    flow: [
+      { t: "decision", q: "Was there liquid, smoke, or a burning smell?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", time: "T+0m", critical: true, title: "Cut the power now", text: "Unplug it and hold the power button to shut it off. Don't try to turn it back on." },
+          { t: "step", title: "Drain and leave it", text: "For spills, open it to a tent shape upside down. Skip the hair dryer and the rice. Take it to a repair shop." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", title: "Try the basic revival", text: "Use a known-good charger, then hold the power button for 15 seconds. Try an external monitor in case only the screen failed." }
+        ]}
+      ]},
+      { t: "decision", q: "Is your data backed up?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", title: "Restore onto another device", text: "Sign in to your cloud storage or restore the backup to a loaner." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", critical: true, title: "Stop DIY recovery attempts", text: "Each attempt can make data harder to recover. Ask a repair shop or data recovery service to pull the drive." }
+        ]}
+      ]},
+      { t: "step", title: "Check sign-in access", text: "Make sure you can still get two-factor codes on another device." },
+      { t: "step", time: "T+1w", title: "Set up automatic backups", text: "Follow the 3-2-1 rule: 3 copies, on 2 kinds of storage, with 1 kept off-site or in the cloud." }
+    ],
+    end: "Device restored or replaced. Keep drinks off the desk."
+  },
+  {
+    id: "wim-012", keywords: "bill pay rent mortgage debt payment broke afford money", code: "WIM-012", title: "Can't pay a bill", category: "Work & money",
+    level: "DISRUPTIVE", duration: "1 week to 3 months",
+    prep: ["List your bills and due dates in one place", "Set up a small buffer fund", "Use direct debits for priority bills", "Save a free debt advice number"],
+    summary: "A payment is due and the funds are not there. Avoidance increases the severity. [[The envelope will not open itself.]]",
+    flow: [
+      { t: "step", time: "T+0d", title: "Rank bills by consequence", text: "Housing, utilities, food, insurance, and transport to work come before credit cards and subscriptions." },
+      { t: "step", when: { country: ["UK"] }, title: "Know your priority bills", text: "In the UK, rent or mortgage, council tax, and energy are priority debts with the toughest penalties. Pay these first." },
+      { t: "step", time: "T+1d", critical: true, title: "Call before the due date", text: "Lenders and utilities offer far more help before a payment is missed than after." },
+      { t: "decision", q: "Is it rent or a mortgage?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", title: "Ask for a written payment plan", text: "Agree what you can actually pay and get it in writing. Look up local tenant or housing assistance programs." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", title: "Ask about hardship programs", text: "Many utilities and lenders have reduced-payment plans or deferrals. Ask for them by name." }
+        ]}
+      ]},
+      { t: "step", critical: true, title: "Avoid payday loans", text: "Their fees can turn a short gap into a long debt. Exhaust the other options first." },
+      { t: "step", title: "Get free advice", text: "Contact {debtHelp}. Advisers can negotiate with creditors on your behalf." }
+    ],
+    end: "Payment arranged. Build a small buffer fund when you can."
+  },
+  {
+    id: "wim-013", keywords: "medical emergency hurt injured injury collapse collapsed unconscious chest pain stroke bleeding breathing ambulance heart attack seizure fit overdose fainted sick ill", code: "WIM-013", title: "Medical emergency", category: "Health",
+    level: "CRITICAL", duration: "Minutes matter",
+    prep: ["Take a first aid course", "Learn the signs of a stroke and heart attack", "Keep a first aid kit at home and in the car", "Know where the nearest defibrillator is"],
+    summary: "A person in subject's vicinity requires urgent medical attention. WARDEN is not a medical professional and will [[route you to one immediately]]. Call first. Read second.",
+    flow: [
+      { t: "decision", q: "Could it be life-threatening?", branches: [
+        { label: "Yes, or not sure", flow: [
+          { t: "step", time: "T+0m", critical: true, title: "Call {emergency} now", text: "Call if someone is unconscious, not breathing normally, has chest pain, signs of a stroke (face drooping, arm weakness, slurred speech), heavy bleeding, a seizure, or a severe allergic reaction. Put the phone on speaker." },
+          { t: "step", critical: true, title: "Keep yourself safe", text: "Check for traffic, fire, electricity, or gas before you approach. You can't help if you get hurt too." },
+          { t: "step", critical: true, title: "Follow the call handler", text: "They'll talk you through first aid until help arrives. Don't hang up until they tell you to." },
+          { t: "decision", q: "Are they breathing normally?", branches: [
+            { label: "No", flow: [
+              { t: "step", critical: true, title: "Start CPR if you can", text: "Push hard and fast in the centre of the chest, 100 to 120 times a minute. The call handler will coach you. Send someone to find a defibrillator (AED)." }
+            ]},
+            { label: "Yes", flow: [
+              { t: "step", title: "Keep them still and warm", text: "If they're unresponsive but breathing, the call handler may ask you to put them in the recovery position. Don't give food or drink." }
+            ]}
+          ]},
+          { t: "step", title: "Get ready for the ambulance", text: "Unlock the door, switch on outside lights, and gather their medications and ID." },
+          { t: "step", when: { pets: true }, title: "Secure your pets", text: "Shut pets in another room so paramedics can work." },
+          { t: "step", when: { children: true }, title: "Line up childcare", text: "Call one of your contacts to look after the children in case you go to hospital." }
+        ]},
+        { label: "No, but needs care", flow: [
+          { t: "step", time: "T+0m", title: "Get urgent advice", text: "Contact {medAdvice}. They'll tell you where to go and how soon." },
+          { t: "step", critical: true, title: "Watch for red flags", text: "If it gets worse, or new symptoms like breathing trouble or confusion appear, call {emergency}." },
+          { t: "step", title: "Bring the details", text: "Take a list of their medications, allergies, and when symptoms started." }
+        ]}
+      ]},
+      { t: "step", title: "Tell their next of kin", text: "Once they're in professional care, let family or close contacts know where they're being taken." }
+    ],
+    end: "Patient in professional care. Consider a first aid course."
+  },
+  {
+    id: "wim-014", keywords: "breakup break broke dumped divorce separated separation relationship partner boyfriend girlfriend husband wife split ex", code: "WIM-014", title: "Relationship breakup", category: "Life",
+    level: "DISRUPTIVE", duration: "Weeks to months",
+    prep: ["Keep your own bank account alongside any joint one", "Keep copies of your ID and important documents", "Know who you'd call or stay with in a crisis"],
+    summary: "A long-term partnership has been dissolved. Shared assets, shared passwords, and [[a shared streaming account]] remain entangled. Prioritise safety, then logistics, then recovery.",
+    flow: [
+      { t: "step", time: "T+0h", critical: true, title: "Make sure you're safe", text: "If you feel threatened or unsafe, call {emergency}. For confidential support, contact {abuse}." },
+      { t: "decision", q: "Do you live together?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", time: "T+0h", title: "Sort out tonight", text: "Decide who sleeps where, or stay with a friend. Big decisions can wait a few days." },
+          { t: "step", title: "Secure your documents", text: "Keep your passport, ID, bank cards, and important papers with you." },
+          { t: "step", title: "Untangle shared money", text: "List joint accounts, bills, and subscriptions. Tell your bank if you're worried about a joint account being emptied." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", title: "Swap belongings in one go", text: "Arrange a single handover, ideally with a friend present or at a neutral spot." }
+        ]}
+      ]},
+      { t: "step", when: { children: true }, title: "Keep the children's routine steady", text: "Agree temporary care arrangements and keep arguments away from them. Family mediation can help you agree a longer-term plan." },
+      { t: "step", title: "Change shared passwords", text: "Email, streaming, cloud storage, and location sharing on your phone." },
+      { t: "step", title: "Tell someone you trust", text: "A friend or family member, today. Mute or unfollow on social media if checking it hurts." },
+      { t: "step", title: "Look after the basics", text: "Sleep, food, and getting outside. If you have thoughts of harming yourself, contact {crisis}." }
+    ],
+    end: "Situation stabilised. Recovery is not linear; that's normal."
+  },
+  {
+    id: "wim-015", keywords: "death died dead passed away bereavement bereaved funeral grief grieving lost someone mum dad mother father parent relative family", code: "WIM-015", title: "Someone has died", category: "Life",
+    level: "DISRUPTIVE", duration: "Weeks to months",
+    prep: ["Make or update your will", "Tell someone where your important papers are", "Write down your own funeral wishes", "Keep a list of your accounts and policies"],
+    summary: "A person close to subject has died. WARDEN will handle the paperwork sequence. [[The rest is not a procedure.]] Take it one step at a time; very little has to happen today.",
+    flow: [
+      { t: "decision", q: "Was the death expected?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", time: "T+0h", title: "Call their doctor or care team", text: "They'll confirm the death. There's no need to call {emergency}." }
+        ]},
+        { label: "No, or you're unsure", flow: [
+          { t: "step", time: "T+0h", critical: true, title: "Call {emergency}", text: "If you think they might still be alive, follow the call handler's instructions. Police may attend an unexpected death; this is routine." }
+        ]}
+      ]},
+      { t: "step", title: "Get the medical certificate", text: "The doctor issues a certificate showing the cause of death. You need it to register the death." },
+      { t: "step", when: { region: ["england", "wales"] }, time: "T+5d", title: "Register the death", text: "Register within 5 days. Ask the registrar about Tell Us Once, which informs most government departments in one go." },
+      { t: "step", when: { region: ["scotland"] }, time: "T+8d", title: "Register the death", text: "Register within 8 days. Ask the registrar about Tell Us Once, which informs most government departments in one go." },
+      { t: "step", when: { region: ["ni"] }, time: "T+5d", title: "Register the death", text: "Register within 5 days at your local council's registration office. Order several certified copies." },
+      { t: "step", when: { notCountry: ["UK"] }, title: "Register the death", text: "Check the deadline with your local registry office. Order several certified copies; banks and insurers each want one." },
+      { t: "step", title: "Look for a will and funeral wishes", text: "Check their papers, their solicitor, or their bank. The will names who deals with the estate." },
+      { t: "step", title: "Contact funeral directors", text: "Ask two or three for itemised quotes. You don't have to choose the first one, even if they collected the body." },
+      { t: "step", when: { budget: ["tight"] }, title: "Ask about lower-cost options", text: "A direct cremation, with no service at the crematorium, costs far less. You can hold a memorial separately." },
+      { t: "step", when: { budget: ["tight"], region: ["scotland"] }, title: "Check the Funeral Support Payment", text: "If you get certain benefits, Social Security Scotland's Funeral Support Payment can help with costs. Apply within 6 months of the funeral." },
+      { t: "step", when: { budget: ["tight"], region: ["england", "wales", "ni"] }, title: "Check the Funeral Expenses Payment", text: "If you get certain benefits, GOV.UK's Funeral Expenses Payment can help with costs. Apply within 6 months of the funeral." },
+      { t: "step", title: "Tell banks, employer, and utilities", text: "Stop payments and pensions. Don't close joint accounts in a hurry." },
+      { t: "step", when: { children: true }, title: "Explain it to the children", text: "Use simple, honest words like \"died\" rather than \"went to sleep\". Keep their routine as normal as you can." },
+      { t: "step", title: "Get support for yourself", text: "Talk to {grief}. Grief can hit hard weeks later, not just at first." }
+    ],
+    end: "Administrative sequence complete. Grief has no deadline."
+  },
+  {
+    id: "wim-016", keywords: "debt debts owe owing loan loans credit card arrears bailiffs bailiff collectors collection overdraft spiralling ccj", code: "WIM-016", title: "Debt out of control", category: "Work & money",
+    level: "CRITICAL", duration: "1 to 6 months",
+    prep: ["Know your total debts and interest rates", "Keep a monthly budget", "Save a free debt advice number", "Avoid borrowing to cover everyday costs"],
+    summary: "Subject's outstanding obligations are growing faster than repayments. Minimum payments are [[feeding the problem, not shrinking it]]. Free advice changes the outcome more than anything else on this list.",
+    flow: [
+      { t: "step", time: "T+0d", title: "List every debt", text: "Who you owe, the balance, interest rate, minimum payment, and any arrears. Open the scary envelopes too." },
+      { t: "step", when: { country: ["UK"] }, critical: true, title: "Pay priority debts first", text: "Rent or mortgage, council tax, energy, TV licence, court fines, and child maintenance carry the harshest penalties. Cover these before credit cards and loans." },
+      { t: "step", when: { notCountry: ["UK"] }, critical: true, title: "Rank by consequence", text: "Housing, utilities, and anything secured on your home or car come before unsecured credit." },
+      { t: "step", time: "T+2d", critical: true, title: "Get free debt advice", text: "Contact {debtHelp}. Never pay for debt advice; the good services are free." },
+      { t: "decision", q: "Are collectors or bailiffs contacting you?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", critical: true, title: "Ask for it in writing", text: "Request written proof of the debt and the amount. Don't let anyone into your home before you've spoken to an adviser." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", title: "Build a real budget", text: "Income minus essentials shows what you can actually offer creditors." }
+        ]}
+      ]},
+      { t: "step", when: { region: ["scotland"], budget: ["tight"] }, title: "Ask about a moratorium", text: "In Scotland, a debt adviser can apply for a statutory moratorium, which stops most creditor action while you work out a plan." },
+      { t: "step", when: { region: ["england", "wales"], budget: ["tight"] }, title: "Ask about Breathing Space", text: "A debt adviser can put you in Breathing Space: 60 days of paused interest, charges, and enforcement while you sort out a plan." },
+      { t: "step", when: { notCountry: ["UK"], budget: ["tight"] }, title: "Ask for a hardship arrangement", text: "Tell each creditor what you can afford and ask them to freeze interest. Put any agreement in writing." },
+      { t: "step", critical: true, title: "Stop new high-cost borrowing", text: "Payday loans, buy now pay later, and overdraft top-ups make the hole deeper." },
+      { t: "step", title: "Review formal options with your adviser", text: "Debt management plans and other formal solutions can freeze interest. Your adviser will explain what fits." }
+    ],
+    end: "Plan agreed. Keep paying what you agreed, and keep the adviser's number."
+  },
+  {
+    id: "wim-017", keywords: "landlord tenant rent renting deposit eviction evicted evict notice repairs repair mould mold damp letting agent lease tenancy", code: "WIM-017", title: "Landlord dispute", category: "Home",
+    level: "DISRUPTIVE", duration: "2 weeks to 3 months",
+    prep: ["Keep a copy of your tenancy agreement", "Take dated photos at check-in", "Keep all landlord messages in writing", "Know your deposit scheme details"],
+    summary: "Relations between subject and property owner have degraded. Communications consist largely of [[read receipts]]. Paper trails win housing disputes.",
+    flow: [
+      { t: "step", time: "T+0d", title: "Put everything in writing", text: "Email or text every request and complaint, even after a phone call. Keep a dated log." },
+      { t: "step", title: "Re-read your tenancy agreement", text: "Note what it says about repairs, notice periods, and the deposit." },
+      { t: "decision", q: "What is the dispute about?", branches: [
+        { label: "Repairs", flow: [
+          { t: "step", title: "Report it with photos", text: "Describe the problem, attach photos, and give a reasonable deadline." },
+          { t: "step", when: { country: ["UK"] }, title: "Escalate to the council", text: "If serious problems like damp, mould, or no heating aren't fixed, your council's environmental health team can inspect." },
+          { t: "step", critical: true, title: "Don't withhold rent", text: "Stopping rent can put you at risk of eviction, even when the landlord is in the wrong." }
+        ]},
+        { label: "Deposit", flow: [
+          { t: "step", when: { region: ["england", "wales"] }, title: "Check it was protected", text: "Your landlord must protect your deposit in a government-backed scheme within 30 days. Each scheme has a free dispute service." },
+          { t: "step", when: { region: ["scotland"] }, title: "Check it was protected", text: "Your landlord must lodge your deposit with an approved scheme within 30 working days. Each scheme has a free dispute service." },
+          { t: "step", when: { region: ["ni"] }, title: "Check it was protected", text: "Your landlord must protect your deposit in an approved scheme within 28 days. Each scheme has a free dispute service." },
+          { t: "step", title: "Ask for itemised deductions", text: "Request a written list with costs. Compare it with your check-in inventory and photos." }
+        ]},
+        { label: "Eviction notice", flow: [
+          { t: "step", critical: true, title: "Don't move out yet", text: "A notice is not an eviction. In most places your landlord needs a court order to make you leave." },
+          { t: "step", critical: true, title: "Locks changed or belongings removed?", text: "That can be an illegal eviction. Call the police, then get advice the same day." },
+          { t: "step", time: "T+1d", title: "Get housing advice now", text: "Contact {housingHelp}. Notices often have errors that make them invalid." }
+        ]}
+      ]},
+      { t: "step", title: "Get free advice", text: "Contact {housingHelp} before any hearing or major decision." }
+    ],
+    end: "Dispute resolved or escalated correctly. Keep the paper trail."
+  },
+  {
+    id: "wim-018", keywords: "flood flooding storm hurricane wildfire bushfire earthquake tornado weather warning evacuate evacuation disaster natural heatwave snow wind", code: "WIM-018", title: "Flood or severe weather", category: "Home",
+    level: "CRITICAL", duration: "Hours to weeks",
+    prep: ["Sign up for flood or weather warnings for your area", "Pack a grab bag with medication, documents, cash, and a torch", "Know how to turn off gas, electricity, and water", "Check your home insurance covers flood and storm damage"],
+    summary: "An environmental event is approaching or affecting subject's area. Property is replaceable. Personnel are not. [[Floodwater is deeper and faster than it looks.]]",
+    flow: [
+      { t: "step", time: "T+0h", critical: true, title: "Follow official warnings", text: "{weather} If authorities tell you to leave, leave." },
+      { t: "decision", q: "Told to evacuate, or is danger reaching your home?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", critical: true, title: "Leave now", text: "Take medication, ID, phone, charger, and warm clothes. Never walk or drive through floodwater: 30 cm of moving water can float a car." },
+          { t: "step", when: { pets: true }, title: "Take your pets", text: "Carriers, leads, and food. Don't leave them behind." },
+          { t: "step", title: "Tell someone where you're going", text: "Message one of your contacts with your route and destination." }
+        ]},
+        { label: "Not yet", flow: [
+          { t: "step", title: "Pack a grab bag", text: "Medication, documents, cash, torch, power bank, water, and snacks. Charge your phone now." },
+          { t: "step", title: "Move valuables up", text: "Raise important items and electricals off the floor or upstairs." },
+          { t: "step", when: { country: ["UK"] }, title: "Know how to cut the supplies", text: "Find your gas, electricity, and water shut-offs. Turn them off if flooding is likely and it's safe to do so." },
+          { t: "step", when: { children: true }, title: "Brief the children", text: "Tell them the plan calmly and pack a comfort item for each." }
+        ]}
+      ]},
+      { t: "step", critical: true, title: "If anyone is in danger, call {emergency}", text: "Don't try water or fire rescues yourself." },
+      { t: "step", title: "Check on neighbours", text: "Especially older people and anyone living alone, by phone if it isn't safe to go out." },
+      { t: "step", title: "Afterwards: document and claim", text: "Don't go home until told it's safe. Photograph damage before cleanup and call your insurer." }
+    ],
+    end: "Threat passed. Keep the grab bag packed."
+  },
+  {
+    id: "wim-019", keywords: "car accident crash crashed collision collided bumped hit rear-ended rear ended prang road traffic accident rta", code: "WIM-019", title: "Car accident", category: "Travel",
+    level: "CRITICAL", duration: "1 hour to 6 weeks",
+    summary: "Subject's vehicle has been involved in a collision. Adrenaline is high and memory is unreliable. Safety first, then [[evidence, before everyone's story changes]].",
+    prep: ["Keep a warning triangle, hi-vis vest, and torch in the car", "Save your insurer's claims number in your phone", "Fit a dashcam or know how to start video recording quickly", "Keep a pen and paper in the glovebox"],
+    flow: [
+      { t: "step", time: "T+0m", critical: true, title: "Stop and make it safe", text: "Stop as soon as it's safe, put your hazards on, and switch off the engine. On fast roads, get everyone behind the barrier." },
+      { t: "decision", q: "Is anyone hurt, or is the road blocked?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", critical: true, title: "Call {emergency}", text: "Ask for police and ambulance. Don't move injured people unless they're in immediate danger, such as fire." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", title: "Clear the road if you can", text: "Take a quick photo of where the cars ended up, then move drivable cars out of traffic." }
+        ]}
+      ]},
+      { t: "step", critical: true, title: "Don't admit fault", text: "Stay calm and polite and stick to the facts. Let the insurers decide who was at fault." },
+      { t: "step", when: { country: ["UK"] }, title: "Exchange details: it's the law", text: "You must give your name, address, and registration to anyone with reasonable grounds to ask. If anyone is injured, you must also show your insurance. If you can't exchange details at the scene, report it to the police as soon as possible and within 24 hours." },
+      { t: "step", when: { notCountry: ["UK"] }, title: "Exchange details", text: "Names, phone numbers, addresses, registrations, and insurers for every driver involved. Check your local law on reporting to the police." },
+      { t: "step", title: "Collect evidence", text: "Photograph the vehicles, damage, road layout, signs, and weather. Get witnesses' contact details and save any dashcam footage." },
+      { t: "step", time: "T+24h", title: "Tell your insurer", text: "Most policies require you to report any accident, even if you don't plan to claim." },
+      { t: "step", time: "T+48h", title: "Get yourself checked", text: "Whiplash and concussion symptoms can appear a day or two later. Contact {medAdvice} if you feel unwell." }
+    ],
+    end: "Incident reported. Keep every photo and letter until the claim closes."
+  },
+  {
+    id: "wim-020", keywords: "scam scammed scammer fraud fraudster phishing suspicious call text message email bank called hmrc irs impersonation sent money transferred gave details safe account", code: "WIM-020", title: "Scam call or message", category: "Tech",
+    level: "CRITICAL", duration: "1 hour to 4 weeks",
+    summary: "An unknown party has contacted subject while impersonating a trusted organisation. Urgency is the weapon. [[Your bank will never ask you to move money to a safe account.]]",
+    prep: ["Agree a family code word for urgent calls asking for money", "Save your bank's fraud number in your phone", "Turn on two-factor sign-in for email and banking", "Turn on unknown caller filtering on your phone"],
+    flow: [
+      { t: "step", time: "T+0m", critical: true, title: "Stop all contact", text: "Hang up or stop replying. Don't click links or open attachments. Banks, police, and tax offices never ask you to move money or share one-time codes." },
+      { t: "decision", q: "Did you send money or share details?", branches: [
+        { label: "Sent money", flow: [
+          { t: "step", time: "T+0m", critical: true, title: "Call your bank now", text: "{bankScam} Act fast: banks can sometimes stop or recall a payment if you report it quickly." },
+          { t: "step", title: "Report the fraud", text: "Report it to {fraud}. Keep the crime reference number for your bank." }
+        ]},
+        { label: "Shared details", flow: [
+          { t: "step", time: "T+0m", critical: true, title: "Alert your bank and change passwords", text: "{bankScam} Then change the passwords for any account you mentioned, starting with email." },
+          { t: "step", title: "Watch your statements", text: "Check transactions daily for the next few weeks." }
+        ]},
+        { label: "Neither", flow: [
+          { t: "step", title: "Report and block", text: "{scamText}" }
+        ]}
+      ]},
+      { t: "step", critical: true, title: "Beware of recovery scams", text: "Scammers often call back pretending to be police or a law firm offering to get your money back for a fee." },
+      { t: "step", title: "Warn people you know", text: "Scammers reuse scripts. Tell family, especially older relatives." }
+    ],
+    end: "Threat neutralised. Hang up first, verify second."
+  },
+  {
+    id: "wim-021", quiet: true, keywords: "suicidal suicide self harm self-harm hurt myself harm myself kill myself want to die crisis panic attack breakdown overwhelmed cope depressed depression anxiety mental health hopeless", code: "WIM-021", title: "Mental health crisis", category: "Health",
+    level: "CRITICAL", duration: "Right now",
+    matchNote: "You're not alone. If you or someone else is in immediate danger, call {emergency} now.",
+    summary: "You, or someone near you, is in emotional crisis. WARDEN is software and can't help the way a person can. These steps connect you to people who can, right now.",
+    prep: ["Write a short safety plan: warning signs, what helps, and who to call", "Save a crisis line in your phone: {crisis}", "Tell one person you trust that you'll call them if things get bad"],
+    flow: [
+      { t: "decision", q: "Is anyone in immediate danger, or already hurt?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", time: "T+0m", critical: true, title: "Call {emergency} now", text: "Or go to the nearest emergency department. If it's someone else, stay with them until help arrives." }
+        ]},
+        { label: "No", flow: [
+          { t: "step", time: "T+0m", critical: true, title: "Talk to someone now", text: "Contact {crisis}, or {mhCrisis}. If talking feels too hard, {textCrisis}" }
+        ]}
+      ]},
+      { t: "step", critical: true, title: "Don't stay alone", text: "Call one of your contacts or go somewhere with other people around." },
+      { t: "step", title: "Make the next hour safer", text: "Put distance between yourself and anything you could use to hurt yourself. Avoid alcohol and drugs tonight." },
+      { t: "step", title: "If it's someone else, ask directly", text: "Asking someone if they're thinking about suicide doesn't put the idea in their head. Listen, stay with them, and help them make the call." },
+      { t: "step", time: "T+24h", title: "Book follow-up care", text: "Make an appointment with a doctor and tell them what happened. Ask about talking therapies." }
+    ],
+    end: "You made it through this moment. Keep your safety plan and crisis numbers close."
+  },
+  {
+    id: "wim-022", keywords: "pet dog cat puppy kitten rabbit animal vet ate eaten poisoned poison toxic chocolate grapes injured hit by car bleeding collapsed seizure bloat", code: "WIM-022", title: "Pet emergency", category: "Home",
+    level: "CRITICAL", duration: "Minutes to hours",
+    summary: "A non-human member of the household requires urgent attention. Subject reports the animal has eaten [[something it absolutely should not have]]. Ring the vet before you search the internet.",
+    prep: ["Save your vet's number and the nearest out-of-hours emergency vet", "Check what your pet insurance covers for emergencies", "Keep a pet carrier and old towels where you can grab them", "Store chocolate, grapes, raisins, and medicines out of reach"],
+    flow: [
+      { t: "step", time: "T+0m", critical: true, title: "Call your vet now", text: "Call your vet, or their out-of-hours emergency service. Describe what happened; they'll tell you whether to come in and how fast." },
+      { t: "decision", q: "Did they eat something toxic?", branches: [
+        { label: "Yes", flow: [
+          { t: "step", critical: true, title: "Don't make them sick yourself", text: "Only do this if the vet tells you to. Bring the packaging. Chocolate, grapes, raisins, xylitol sweetener, lilies (for cats), and human medicines are common dangers." }
+        ]},
+        { label: "No, injury or illness", flow: [
+          { t: "step", title: "Keep them calm and still", text: "Handle them gently. Animals in pain may bite, even their owners. Press a clean cloth on any bleeding." }
+        ]}
+      ]},
+      { t: "step", title: "Move them safely", text: "Use a carrier, or a blanket as a stretcher for larger dogs. Call ahead so the vet is ready." },
+      { t: "step", when: { budget: ["tight"] }, title: "Ask about payment help", text: "Ask the vet about payment plans. {vetHelp}" },
+      { t: "step", title: "Write down what happened", text: "Note the time, symptoms, and anything they ate. Vets need the details." }
+    ],
+    end: "Patient in veterinary care. Check what's within paw's reach."
+  }
+
+];
+/* Country-specific numbers and services, checked against official and published sources on CHECKED.
+   Keys are used as {placeholders} in step text. LINKS turns a placeholder into a link to its source.
+   UK regions override the UK values for that nation. */
+const CHECKED = "2026-11-18";
+const COUNTRIES = {
+  UK: { name: "United Kingdom", emergency: "999", crisis: "Samaritans on 116 123 (free, 24/7)", medAdvice: "NHS 111 (call 111 or go to 111.nhs.uk)",
+    mhCrisis: "NHS 111 and choose the mental health option", textCrisis: "text SHOUT to 85258 (free, 24/7).",
+    debtHelp: "StepChange, National Debtline (0808 808 4000), or Citizens Advice", housingHelp: "Shelter's helpline (0808 800 4444) or Citizens Advice",
+    jobHelp: "Check Universal Credit and New Style Jobseeker's Allowance on GOV.UK. The first Universal Credit payment takes about 5 weeks, and you can ask for an advance.",
+    powerCut: "Call 105, the free power cut line, to report it and get a restoration estimate.", abuse: "the National Domestic Abuse Helpline on 0808 2000 247 (free, 24/7)",
+    weather: "Check flood warnings on GOV.UK or call Floodline on 0345 988 1188, and follow Met Office warnings.", grief: "Cruse Bereavement Support on 0808 808 1677",
+    fraud: "Report Fraud on 0300 123 2040 or reportfraud.police.uk", bankScam: "Call 159 from a different phone if you can. It connects you safely to your bank.",
+    scamText: "Forward scam texts to 7726 and scam emails to report@phishing.gov.uk, then block the sender.",
+    vetHelp: "If you get certain benefits, PDSA, Blue Cross, or RSPCA clinics may offer free or low-cost treatment." },
+  IE: { name: "Ireland", emergency: "112 or 999", crisis: "Samaritans on 116 123 (free, 24/7)", medAdvice: "your GP or a GP out-of-hours service",
+    mhCrisis: "your GP or GP out-of-hours service", textCrisis: "text HELLO to 50808 (free, 24/7).",
+    debtHelp: "MABS, the free Money Advice and Budgeting Service (0818 07 2000)", housingHelp: "Threshold, the national housing charity",
+    jobHelp: "Apply for Jobseeker's Benefit or Jobseeker's Allowance on gov.ie or at your local Intreo centre.",
+    powerCut: "Report it to ESB Networks on 1800 372 999 and check PowerCheck for a restoration estimate.", abuse: "Women's Aid on 1800 341 900 (free, 24/7)",
+    weather: "Follow Met Éireann warnings and your local council's instructions.", grief: "a local bereavement support service",
+    fraud: "your local Garda station", bankScam: "Call your bank's fraud line using the number on your card, from a different phone if you can.",
+    scamText: "Report it in your messaging app, block the sender, and tell your bank if it used their name.",
+    vetHelp: "Animal welfare charities near you may run low-cost clinics." },
+  US: { name: "United States", emergency: "911", crisis: "the 988 Suicide & Crisis Lifeline (call or text 988)", medAdvice: "your doctor's nurse line or an urgent care clinic",
+    mhCrisis: "call or text 988", textCrisis: "text 988.",
+    debtHelp: "a nonprofit credit counseling agency (look for NFCC members)", housingHelp: "local legal aid or a tenant rights group (dial 211 for referrals)",
+    jobHelp: "File a claim with your state's unemployment insurance office right away. Most states pay from the filing date and need weekly claims after that.",
+    powerCut: "Report it to your utility and check its outage map for a restoration estimate.", abuse: "the National Domestic Violence Hotline at 1-800-799-7233",
+    weather: "Follow National Weather Service alerts and your local emergency management office.", grief: "a local hospice bereavement program",
+    fraud: "the FTC at ReportFraud.ftc.gov", bankScam: "Call your bank's fraud line using the number on your card, from a different phone if you can.",
+    scamText: "Forward scam texts to 7726 (SPAM), then block the sender.",
+    vetHelp: "Local humane societies and veterinary schools sometimes offer lower-cost care." },
+  CA: { name: "Canada", emergency: "911", crisis: "9-8-8, the Suicide Crisis Helpline (call or text)", medAdvice: "811 for advice from a nurse (most provinces)",
+    mhCrisis: "call or text 9-8-8", textCrisis: "text 9-8-8.",
+    debtHelp: "a nonprofit credit counselling agency", housingHelp: "your provincial landlord and tenant board or a tenant advocacy group (dial 211)",
+    jobHelp: "Apply for Employment Insurance through Service Canada within 4 weeks of your last day of work.",
+    powerCut: "Report it to your local utility and check its outage map.", abuse: "local shelters and support services (dial 211)",
+    weather: "Follow Environment Canada alerts and your local authorities.", grief: "a local hospice or bereavement service",
+    fraud: "the Canadian Anti-Fraud Centre (1-888-495-8501)", bankScam: "Call your bank's fraud line using the number on your card, from a different phone if you can.",
+    scamText: "Forward scam texts to 7726 (SPAM), then block the sender.",
+    vetHelp: "Local humane societies may run lower-cost clinics." },
+  AU: { name: "Australia", emergency: "000", crisis: "Lifeline on 13 11 14", medAdvice: "healthdirect on 1800 022 222",
+    mhCrisis: "Lifeline on 13 11 14", textCrisis: "text Lifeline on 0477 13 11 14.",
+    debtHelp: "the National Debt Helpline on 1800 007 007", housingHelp: "your state's tenants' advice service",
+    jobHelp: "Claim JobSeeker Payment through Centrelink in myGov as soon as possible.",
+    powerCut: "Report it to your electricity distributor and check its outage map.", abuse: "1800RESPECT on 1800 737 732",
+    weather: "Follow your state emergency service. For storm and flood help call the SES on 132 500.", grief: "a local bereavement support service",
+    fraud: "Scamwatch and ReportCyber", bankScam: "Call your bank's fraud line using the number on your card, from a different phone if you can.",
+    scamText: "Report it to Scamwatch, then block the sender.",
+    vetHelp: "The RSPCA and local vet schools may offer lower-cost care." },
+  NZ: { name: "New Zealand", emergency: "111", crisis: "Need to talk? Call or text 1737", medAdvice: "Healthline on 0800 611 116",
+    mhCrisis: "call or text 1737", textCrisis: "text 1737.",
+    debtHelp: "MoneyTalks on 0800 345 123", housingHelp: "Tenancy Services or your local Community Law centre",
+    jobHelp: "Apply for Jobseeker Support through Work and Income (MyMSD).",
+    powerCut: "Report it to your lines company and check its outage map.", abuse: "the Family Violence Information Line on 0800 456 450",
+    weather: "Follow MetService warnings and Civil Defence instructions.", grief: "a local bereavement support service",
+    fraud: "Netsafe and your bank", bankScam: "Call your bank's fraud line using the number on your card, from a different phone if you can.",
+    scamText: "Forward scam texts free to 7726, then block the sender.",
+    vetHelp: "The SPCA and local vets may offer payment plans or lower-cost care." },
+  OTHER: { name: "Other country", emergency: "your local emergency number (112 works from mobiles in many countries)", crisis: "a local crisis line (findahelpline.com lists them)",
+    medAdvice: "a local doctor or urgent care clinic", mhCrisis: "a local crisis line", textCrisis: "check findahelpline.com for text services near you.",
+    debtHelp: "a free, nonprofit debt advice service", housingHelp: "a local tenants' rights organisation",
+    jobHelp: "Apply for unemployment benefits right away. Many programs only pay from the date you file.",
+    powerCut: "Report it to your power company and check its outage map.", abuse: "local domestic abuse support services",
+    weather: "Follow your national weather service and local authorities.", grief: "a local bereavement support service",
+    fraud: "your local police", bankScam: "Call your bank's fraud line using the number on your card, from a different phone if you can.",
+    scamText: "Report it in your messaging app, then block the sender.",
+    vetHelp: "Local animal welfare charities may offer lower-cost care." }
+};
+const UK_REGIONS = {
+  england: { name: "England" },
+  scotland: { name: "Scotland", medAdvice: "NHS 24 on 111", mhCrisis: "NHS 24 on 111, or Breathing Space on 0800 83 85 87",
+    abuse: "Scotland's Domestic Abuse and Forced Marriage Helpline on 0800 027 1234 (24/7)", housingHelp: "Shelter Scotland's helpline (0808 800 4444) or Citizens Advice Scotland",
+    debtHelp: "StepChange, National Debtline (0808 808 4000), or Citizens Advice Scotland", fraud: "Police Scotland on 101",
+    weather: "Check SEPA flood warnings or call Floodline on 0345 988 1188, and follow Met Office warnings." },
+  wales: { name: "Wales", medAdvice: "NHS 111 Wales (call 111)", mhCrisis: "NHS 111 Wales and press 2 for mental health",
+    abuse: "Live Fear Free on 0808 80 10 800 (free, 24/7)", housingHelp: "Shelter Cymru or Citizens Advice" },
+  ni: { name: "Northern Ireland", medAdvice: "your GP or GP out-of-hours service", mhCrisis: "Lifeline on 0808 808 8000",
+    abuse: "the Domestic and Sexual Abuse Helpline on 0808 802 1414 (24/7)", housingHelp: "Housing Rights on 028 9024 5640",
+    debtHelp: "Advice NI or StepChange", powerCut: "Call NIE Networks on 03457 643 643 to report it.",
+    jobHelp: "Check Universal Credit and New Style Jobseeker's Allowance on nidirect. The first Universal Credit payment takes about 5 weeks, and you can ask for an advance.",
+    weather: "Report flooding to the Flooding Incident Line on 0300 2000 100, and follow Met Office warnings." }
+};
+/* Source pages for each placeholder, by country (and UK nation). */
+const LINKS = {
+  UK: { medAdvice: "https://111.nhs.uk", crisis: "https://www.samaritans.org", textCrisis: "https://giveusashout.org", mhCrisis: "https://www.nhs.uk/nhs-services/mental-health-services/where-to-get-urgent-help-for-mental-health/",
+    debtHelp: "https://www.nationaldebtline.org", housingHelp: "https://england.shelter.org.uk/get_help/helpline", jobHelp: "https://www.gov.uk/universal-credit",
+    powerCut: "https://www.powercut105.com", abuse: "https://www.nationaldahelpline.org.uk", weather: "https://check-for-flooding.service.gov.uk",
+    grief: "https://www.cruse.org.uk", fraud: "https://www.reportfraud.police.uk", bankScam: "https://stopscamsuk.org.uk", scamText: "https://www.ofcom.org.uk/phones-and-broadband/scam-calls-and-messages/what-to-do-about-a-scam-call-text-or-message",
+    vetHelp: "https://www.pdsa.org.uk" },
+  scotland: { medAdvice: "https://www.nhs24.scot", mhCrisis: "https://breathingspace.scot", abuse: "https://sdafmh.org.uk",
+    housingHelp: "https://scotland.shelter.org.uk/get_help/helpline", fraud: "https://www.scotland.police.uk", weather: "https://www.sepa.org.uk" },
+  wales: { medAdvice: "https://111.wales.nhs.uk", mhCrisis: "https://111.wales.nhs.uk", abuse: "https://www.gov.wales/live-fear-free", housingHelp: "https://sheltercymru.org.uk" },
+  ni: { medAdvice: "https://www.nidirect.gov.uk/articles/gp-out-hours-service", mhCrisis: "https://www.lifelinehelpline.info", abuse: "https://www.dsahelpline.org",
+    housingHelp: "https://www.housingrights.org.uk", debtHelp: "https://www.adviceni.net", powerCut: "https://www.nienetworks.co.uk",
+    jobHelp: "https://www.nidirect.gov.uk/articles/universal-credit", weather: "https://www.nidirect.gov.uk/articles/reporting-flooding" },
+  IE: { crisis: "https://www.samaritans.org/ireland", textCrisis: "https://text50808.ie", debtHelp: "https://www.mabs.ie", housingHelp: "https://www.threshold.ie",
+    jobHelp: "https://www.gov.ie", powerCut: "https://powercheck.esbnetworks.ie", abuse: "https://www.womensaid.ie", weather: "https://www.met.ie/warnings", fraud: "https://www.garda.ie" },
+  US: { crisis: "https://988lifeline.org", mhCrisis: "https://988lifeline.org", textCrisis: "https://988lifeline.org", debtHelp: "https://www.nfcc.org", housingHelp: "https://www.211.org",
+    jobHelp: "https://www.careeronestop.org/LocalHelp/UnemploymentBenefits/find-unemployment-benefits.aspx", abuse: "https://www.thehotline.org", weather: "https://www.weather.gov", fraud: "https://reportfraud.ftc.gov" },
+  CA: { crisis: "https://988.ca", mhCrisis: "https://988.ca", textCrisis: "https://988.ca", jobHelp: "https://www.canada.ca/en/services/benefits/ei.html", housingHelp: "https://211.ca",
+    abuse: "https://sheltersafe.ca", weather: "https://weather.gc.ca", fraud: "https://antifraudcentre-centreantifraude.ca" },
+  AU: { crisis: "https://www.lifeline.org.au", mhCrisis: "https://www.lifeline.org.au", textCrisis: "https://www.lifeline.org.au", medAdvice: "https://www.healthdirect.gov.au",
+    debtHelp: "https://ndh.org.au", jobHelp: "https://www.servicesaustralia.gov.au/jobseeker-payment", abuse: "https://www.1800respect.org.au",
+    weather: "https://www.bom.gov.au/australia/warnings/", fraud: "https://www.scamwatch.gov.au", scamText: "https://www.scamwatch.gov.au" },
+  NZ: { crisis: "https://1737.org.nz", mhCrisis: "https://1737.org.nz", textCrisis: "https://1737.org.nz", debtHelp: "https://www.moneytalks.co.nz",
+    jobHelp: "https://www.workandincome.govt.nz", abuse: "https://www.areyouok.org.nz", weather: "https://www.metservice.com/warnings", fraud: "https://netsafe.org.nz" },
+  OTHER: { crisis: "https://findahelpline.com", mhCrisis: "https://findahelpline.com", textCrisis: "https://findahelpline.com" }
+};
+</script>
+
+<style>
+/* Layout: one CRT terminal. Header bar, archive index on the left, WARDEN console + animated procedure chart on the right.
+   Deliberately single-theme (amber phosphor on warm black), so no light variant. */
+:root {
+  --bg: #0c0b09;
+  --panel: #13110d;
+  --panel-2: #1a1712;
+  --fg: #ecd9ae;
+  --dim: #94866a;
+  --line: #3a3326;
+  --amber: #ffb547;
+  --alert: #ff5d4f;
+  --ok: #9ed39a;
+  --ice: #7fc8d6;
+  --glow: rgba(255, 181, 71, .35);
+  --font-display: "VT323", "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-mono); font-size: 14px; line-height: 1.55;
+  background-image: radial-gradient(ellipse at 50% 30%, #1d1912 0%, var(--bg) 70%);
+  background-attachment: fixed;
+}
+::selection { background: var(--amber); color: var(--bg); }
+a, button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+
+/* CRT layer */
+.crt { pointer-events: none; position: fixed; inset: 0; z-index: 50;
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.22) 2px 3px);
+  mix-blend-mode: multiply; }
+.crt::after { content: ""; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,.55) 100%); }
+.sweep { pointer-events: none; position: fixed; left: 0; right: 0; height: 120px; top: -120px; z-index: 51;
+  background: linear-gradient(to bottom, transparent, rgba(255,181,71,.05), transparent);
+  animation: sweep 7s linear infinite; }
+@keyframes sweep { to { top: 100%; } }
+.glowtext { text-shadow: 0 0 6px var(--glow); }
+
+/* Boot */
+.boot { position: fixed; inset: 0; z-index: 40; background: var(--bg); display: flex; flex-direction: column; justify-content: flex-end;
+  padding-block: 24px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  font-size: 13px; color: var(--dim); cursor: pointer; }
+.boot pre { margin: 0; white-space: pre-wrap; font: inherit; }
+.boot .hi { color: var(--amber); }
+.boot .skip { position: absolute; top: calc(16px + env(safe-area-inset-top, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); font-size: 11px; letter-spacing: .1em; }
+.boot.out { animation: crtOff .45s ease-in forwards; }
+@keyframes crtOff { 60% { transform: scaleY(.02); opacity: 1; filter: brightness(3); } 100% { transform: scale(0, .0); opacity: 0; } }
+
+/* Shell */
+.shell { min-height: 100%; display: flex; flex-direction: column; }
+.shell > .body { flex: 1; }
+.topbar {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: space-between;
+  border-bottom: 1px solid var(--line); background: var(--panel);
+  padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim);
+}
+.brand { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.brand b { font: 400 30px/1 var(--font-display); letter-spacing: .06em; color: var(--amber); }
+.status { display: flex; gap: 16px; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
+.dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); margin-right: 6px; box-shadow: 0 0 6px var(--ok); animation: blink 1.6s steps(2) infinite; }
+@keyframes blink { 50% { opacity: .25; } }
+
+.body { display: grid; grid-template-columns: 290px minmax(0, 1fr); min-height: 0; }
+.index {
+  border-right: 1px solid var(--line); background: rgba(19,17,13,.7);
+  padding-block: 18px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: 14px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.label { font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; background: transparent; border: 1px solid var(--line); color: var(--dim); padding: 3px 8px; cursor: pointer; }
+.chip:hover { border-color: var(--dim); }
+.chip[aria-pressed="true"] { background: var(--amber); color: var(--bg); border-color: var(--amber); }
+.files { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.files a {
+  display: grid; grid-template-columns: 58px minmax(0, 1fr) 10px; gap: 8px; align-items: baseline;
+  padding: 8px 6px; text-decoration: none; border-bottom: 1px dashed var(--line); position: relative;
+  transition: background .15s, padding-left .15s;
+}
+.files a:hover { background: var(--panel-2); padding-left: 10px; }
+.files a[aria-current="page"] { background: var(--panel-2); color: var(--amber); }
+.files a[aria-current="page"]::before { content: "▸"; position: absolute; left: -10px; color: var(--amber); }
+.f-code { font-size: 10.5px; color: var(--dim); }
+.f-title { font-weight: 500; }
+.pip { width: 8px; height: 8px; align-self: center; }
+.L-ROUTINE { --lvl: var(--ok); }
+.L-DISRUPTIVE { --lvl: var(--amber); }
+.L-CRITICAL { --lvl: var(--alert); }
+.pip { background: var(--lvl); box-shadow: 0 0 6px var(--lvl); }
+.legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 10.5px; color: var(--dim); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+.main { min-width: 0; padding-block: 18px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 18px; }
+.wrap { max-width: 1000px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+
+/* Console */
+.console { border: 1px solid var(--line); background: var(--panel); }
+.console-h { display: flex; justify-content: space-between; gap: 8px; padding: 6px 12px; border-bottom: 1px solid var(--line); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.log { height: 150px; overflow-y: auto; padding: 10px 12px; display: flex; flex-direction: column; gap: 3px; font-size: 13px; }
+.log .who { color: var(--amber); }
+.log .you { color: var(--ice); }
+.log .sys { color: var(--dim); }
+.log .warn { color: var(--alert); }
+.log button.opt { background: none; border: 0; border-bottom: 1px dashed var(--amber); color: var(--amber); padding: 0; cursor: pointer; }
+.prompt { display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--line); padding: 8px 12px; }
+.prompt span { color: var(--amber); }
+.prompt input { flex: 1; min-width: 0; background: transparent; border: 0; color: var(--fg); caret-color: var(--amber); padding: 4px 0; }
+.prompt input::placeholder { color: var(--dim); }
+.prompt input:focus-visible { outline: none; }
+.prompt:focus-within { box-shadow: inset 0 0 0 1px var(--amber); }
+.send { background: var(--amber); color: var(--bg); border: 0; padding: 4px 10px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+
+/* Dossier */
+.dossier { border: 1px solid var(--line); background: var(--panel); padding: clamp(16px, 3.5vw, 36px); position: relative; overflow: hidden; }
+.dossier::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: var(--lvl); box-shadow: 0 0 12px var(--lvl); }
+.d-top { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.d-title { margin: 14px 0 4px; font: 400 clamp(44px, 8vw, 76px)/.9 var(--font-display); letter-spacing: .03em; text-transform: uppercase; color: var(--amber); text-wrap: balance; text-shadow: 0 0 14px var(--glow); position: relative; }
+.glitch { animation: glitch .5s steps(2) 1; }
+@keyframes glitch {
+  0% { text-shadow: 3px 0 var(--alert), -3px 0 var(--ice); clip-path: inset(0 0 55% 0); transform: translateX(-4px); }
+  25% { text-shadow: -3px 0 var(--alert), 3px 0 var(--ice); clip-path: inset(40% 0 0 0); transform: translateX(4px); }
+  50% { text-shadow: 2px 0 var(--alert), -2px 0 var(--ice); clip-path: inset(10% 0 30% 0); transform: translateX(-2px); }
+  100% { text-shadow: 0 0 14px var(--glow); clip-path: inset(0); transform: none; }
+}
+.stamp { display: inline-block; margin-top: 8px; font: 400 20px/1 var(--font-display); letter-spacing: .14em; text-transform: uppercase; color: var(--lvl); border: 2px solid var(--lvl); padding: 4px 10px 2px; }
+.meta { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 18px; }
+.meta div { background: var(--panel); padding: 8px 12px; min-width: 0; }
+.meta dt { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.meta dd { margin: 2px 0 0; font-weight: 600; }
+.meta .lv { color: var(--lvl); }
+.sec { display: flex; align-items: center; gap: 10px; margin: 26px 0 10px; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--dim); font-weight: 500; }
+.sec::after { content: ""; flex: 1; border-top: 1px dashed var(--line); }
+.assess { max-width: 70ch; margin: 0; min-height: 4.6em; }
+.assess .tag { color: var(--amber); }
+.caret { display: inline-block; width: .6em; height: 1.05em; background: var(--amber); vertical-align: -2px; margin-left: 2px; animation: blink 1s steps(2) infinite; }
+.redact { background: var(--fg); color: transparent; border: 0; padding: 0 2px; cursor: pointer; border-radius: 0; user-select: none; font: inherit; }
+.redact:hover { background: var(--amber); }
+.redact.shown { background: transparent; color: var(--alert); border-bottom: 1px dashed var(--alert); cursor: default; }
+.redact.scramble { background: transparent; color: var(--amber); }
+
+.progress { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--dim); font-variant-numeric: tabular-nums; }
+.bar { flex: 1; min-width: 120px; height: 8px; border: 1px solid var(--line); background: repeating-linear-gradient(90deg, transparent 0 6px, rgba(255,255,255,.03) 6px 8px); }
+.bar i { display: block; height: 100%; width: 0; background: var(--ok); box-shadow: 0 0 8px var(--ok); transition: width .5s cubic-bezier(.2,.8,.2,1); }
+.reset { background: none; border: 1px solid var(--line); color: var(--dim); padding: 3px 8px; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+.reset:hover { color: var(--fg); border-color: var(--dim); }
+
+/* Flowchart */
+.chart { overflow-x: auto; padding: 10px 0 4px; }
+.flow { display: flex; flex-direction: column; align-items: center; width: 100%; }
+.wire { width: 2px; height: 24px; background: var(--dim); flex: none; transform-origin: top; position: relative; }
+.wire.grow { flex: 1 1 auto; min-height: 24px; }
+.wire.live::after { content: ""; position: absolute; left: -2px; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 8px var(--amber); animation: pulse 1.8s linear infinite; animation-delay: calc(var(--d, 0) * -0.2s); }
+@keyframes pulse { from { top: -3px; opacity: 1; } to { top: 100%; opacity: 0; } }
+.terminal { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; border: 1px solid var(--amber); color: var(--amber); padding: 6px 16px; text-align: center; max-width: 360px; box-shadow: 0 0 10px rgba(255,181,71,.15); }
+.terminal.end { border-style: double; border-width: 3px; color: var(--ok); border-color: var(--ok); }
+.step { width: 100%; max-width: 340px; background: var(--panel-2); border: 1px solid var(--line); padding: 10px 12px 12px; position: relative; transition: border-color .2s, box-shadow .2s; }
+.step:hover { border-color: var(--dim); }
+.step.critical { border-left: 3px solid var(--alert); }
+.step-head { display: flex; justify-content: space-between; gap: 8px; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+.step-head .crit { color: var(--alert); }
+.step label { display: flex; gap: 10px; align-items: flex-start; margin-top: 4px; cursor: pointer; }
+.box { flex: none; width: 15px; height: 15px; border: 1px solid var(--dim); margin-top: 3px; display: grid; place-items: center; }
+.step input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.step input:focus-visible + .box { outline: 2px solid var(--amber); outline-offset: 2px; }
+.step h4 { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.35; }
+.step p { margin: 4px 0 0 25px; font-size: 12.5px; line-height: 1.55; color: var(--dim); }
+.step.done { border-color: var(--ok); box-shadow: 0 0 0 1px var(--ok) inset, 0 0 14px rgba(158,211,154,.12); }
+.step.done .box { border-color: var(--ok); background: var(--ok); }
+.step.done .box::after { content: "✓"; color: var(--bg); font-size: 11px; font-weight: 700; line-height: 1; }
+.step.done h4 { color: var(--ok); }
+.step.done::after { content: "EXECUTED"; position: absolute; right: 10px; bottom: 8px; font: 400 16px/1 var(--font-display); letter-spacing: .16em; color: var(--ok); border: 1px solid var(--ok); padding: 1px 5px 0; animation: stamp .35s cubic-bezier(.2,1.6,.4,1); transform: rotate(-4deg); }
+@keyframes stamp { from { transform: rotate(-4deg) scale(2.2); opacity: 0; } }
+.decision { width: 100%; max-width: 360px; text-align: center; color: var(--ice); padding: 12px 22px; position: relative; background: rgba(127,200,214,.07);
+  clip-path: polygon(16px 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 16px 100%, 0 50%); }
+.decision::before { content: ""; position: absolute; inset: 0; background: var(--ice); clip-path: polygon(16px 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 16px 100%, 0 50%, 1px 50%, 16.5px 99%, calc(100% - 16.5px) 99%, calc(100% - 1px) 50%, calc(100% - 16.5px) 1px, 16.5px 1px, 1px 50%, 0 50%); }
+.decision small { display: block; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; opacity: .8; }
+.decision strong { font-weight: 600; line-height: 1.4; color: var(--fg); }
+.split { display: grid; grid-template-columns: repeat(var(--n), minmax(240px, 1fr)); width: 100%; position: relative; }
+.split::before, .split::after { content: ""; position: absolute; left: calc(50% / var(--n)); right: calc(50% / var(--n)); height: 2px; background: var(--dim); }
+.split::before { top: 0; }
+.split::after { bottom: 0; }
+.branch { display: flex; flex-direction: column; align-items: center; padding: 0 10px; min-width: 0; }
+.blabel { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ice); border: 1px solid var(--ice); padding: 2px 8px; text-align: center; max-width: 100%; background: var(--panel); }
+.disclaimer { margin: 28px 0 0; border-top: 1px dashed var(--line); padding-top: 12px; font-size: 11.5px; color: var(--dim); max-width: 80ch; }
+
+/* Reveal sequence: each piece animates in along the path, in document order. */
+.rv { animation: rvIn .45s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--d) * 70ms + 250ms); }
+.wire.rv { animation-name: rvWire; animation-duration: .25s; }
+.split.rv { animation-name: rvSplit; }
+@keyframes rvIn { from { opacity: 0; transform: translateY(8px); filter: blur(2px) brightness(2); } }
+@keyframes rvWire { from { transform: scaleY(0); } }
+@keyframes rvSplit { from { opacity: .0; } }
+
+/* Top controls */
+.tbtn { background: transparent; border: 1px solid var(--line); color: var(--fg); padding: 4px 10px; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+.tbtn:hover { border-color: var(--amber); color: var(--amber); }
+.tbtn[aria-pressed="false"] { color: var(--dim); }
+.status { align-items: center; }
+
+/* Tailoring */
+.tpl { color: var(--amber); font-weight: 600; }
+.tailor { color: var(--ice); }
+.calib { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; font-size: 11.5px; color: var(--dim); }
+.calib b { color: var(--ice); font-weight: 500; border: 1px solid rgba(127,200,214,.4); padding: 1px 7px; }
+.calib button { background: none; border: 0; border-bottom: 1px dashed var(--amber); color: var(--amber); padding: 0; cursor: pointer; font-size: 11.5px; }
+
+/* Emergency card (Critical files) */
+.ecard { margin-top: 18px; border: 1px solid var(--alert); background: rgba(255,93,79,.06); padding: 12px 14px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 18px; align-items: center; }
+.ecard .big { font: 400 46px/1 var(--font-display); color: var(--alert); text-shadow: 0 0 12px rgba(255,93,79,.4); grid-row: span 2; user-select: all; }
+.ecard .lab { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--alert); }
+.ecard .contacts { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px; border-top: 1px dashed rgba(255,93,79,.35); padding-top: 8px; }
+.ct { display: inline-flex; gap: 8px; align-items: center; border: 1px solid var(--line); padding: 3px 4px 3px 8px; font-size: 12.5px; }
+.ct span { user-select: all; color: var(--amber); }
+.ct button { background: var(--panel-2); border: 1px solid var(--line); color: var(--dim); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 2px 6px; cursor: pointer; }
+.ecard .none { font-size: 12px; color: var(--dim); }
+.ecard .none button { background: none; border: 0; border-bottom: 1px dashed var(--amber); color: var(--amber); padding: 0; cursor: pointer; font-size: 12px; }
+
+/* Alarm */
+.dossier.alarm { animation: alarm .5s steps(2) 4; }
+@keyframes alarm { 50% { box-shadow: inset 0 0 0 2px var(--alert), 0 0 40px rgba(255,93,79,.35); } }
+.alertbar { display: flex; align-items: center; gap: 10px; margin: -4px 0 12px; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--alert); }
+.alertbar::before { content: ""; width: 9px; height: 9px; background: var(--alert); box-shadow: 0 0 8px var(--alert); animation: blink .8s steps(2) infinite; }
+
+/* Profile panel */
+.overlay { position: fixed; inset: 0; z-index: 45; background: rgba(5,4,3,.78); display: grid; place-items: center;
+  padding-block: 24px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); overflow-y: auto; }
+.panel { width: 100%; max-width: 560px; background: var(--panel); border: 1px solid var(--amber); box-shadow: 0 0 30px rgba(255,181,71,.15); animation: rvIn .3s ease-out both; }
+.panel-h { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--line); }
+.panel-h b { font: 400 26px/1 var(--font-display); color: var(--amber); letter-spacing: .06em; }
+.panel form { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 6px; border: 0; margin: 0; padding: 0; min-width: 0; }
+.field > span, .field legend { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); padding: 0; margin-bottom: 6px; }
+.panel select, .panel input[type=text], .panel input[type=tel] { background: var(--bg); border: 1px solid var(--line); color: var(--fg); padding: 7px 9px; width: 100%; min-width: 0; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt-in { position: relative; }
+.opt-in input { position: absolute; opacity: 0; }
+.opt-in span { display: inline-block; border: 1px solid var(--line); padding: 5px 10px; font-size: 12px; cursor: pointer; color: var(--dim); }
+.opt-in input:checked + span { border-color: var(--ice); color: var(--ice); background: rgba(127,200,214,.08); }
+.opt-in input:focus-visible + span { outline: 2px solid var(--amber); outline-offset: 2px; }
+.crow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+.note { font-size: 11.5px; color: var(--dim); margin: 0; }
+.actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+
+/* Active incident */
+.activebar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; background: #251311; border-bottom: 1px solid var(--alert);
+  padding-block: 8px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--alert); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; }
+.activebar::before { content: ""; width: 9px; height: 9px; background: var(--alert); box-shadow: 0 0 8px var(--alert); animation: blink .8s steps(2) infinite; }
+.activebar .timer { font: 400 22px/1 var(--font-display); letter-spacing: .08em; font-variant-numeric: tabular-nums; }
+.activebar a, .activebar button { color: var(--fg); background: none; border: 1px solid var(--line); padding: 3px 8px; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; text-decoration: none; }
+.activebar .sp { flex: 1; }
+.btn-alert { background: transparent; border: 1px solid var(--alert); color: var(--alert); padding: 4px 10px; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+.btn-alert:hover { background: var(--alert); color: var(--bg); }
+.inclog { margin-top: 10px; border: 1px solid var(--alert); background: rgba(255,93,79,.04); }
+.inclog-h { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; align-items: center; padding: 8px 12px; border-bottom: 1px dashed rgba(255,93,79,.35); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--alert); }
+.inclog-h .acts { display: flex; gap: 6px; flex-wrap: wrap; }
+.inclog ol { list-style: none; margin: 0; padding: 8px 12px; max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 3px; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.inclog li span { color: var(--dim); margin-right: 10px; }
+.inclog form { display: flex; gap: 8px; padding: 8px 12px; border-top: 1px dashed rgba(255,93,79,.35); }
+.inclog input { flex: 1; min-width: 0; background: var(--bg); border: 1px solid var(--line); color: var(--fg); padding: 5px 8px; }
+.inclog textarea { width: calc(100% - 24px); margin: 0 12px 10px; height: 120px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); font-size: 12px; }
+
+/* Readiness */
+.ready-link { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--line); text-decoration: none; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.ready-link b { font: 400 22px/1 var(--font-display); color: var(--ok); letter-spacing: .04em; }
+.ready-link[aria-current="page"], .ready-link:hover { border-color: var(--ok); color: var(--fg); }
+.prep { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; }
+.prep label { display: flex; gap: 10px; align-items: flex-start; border: 1px dashed var(--line); padding: 8px 10px; cursor: pointer; font-size: 13px; height: 100%; }
+.prep input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.prep input:focus-visible + .box { outline: 2px solid var(--amber); outline-offset: 2px; }
+.prep .on { border-style: solid; border-color: var(--ok); color: var(--ok); }
+.prep .on .box { border-color: var(--ok); background: var(--ok); }
+.prep .on .box::after { content: "✓"; color: var(--bg); font-size: 11px; font-weight: 700; line-height: 1; }
+.rtable { display: flex; flex-direction: column; margin-top: 10px; }
+.rrow { display: grid; grid-template-columns: 70px minmax(0, 1fr) minmax(80px, 200px) 46px; gap: 12px; align-items: center; padding: 8px 4px; border-bottom: 1px dashed var(--line); text-decoration: none; }
+.rrow:hover { background: var(--panel-2); }
+.rrow .bar { min-width: 0; }
+.rrow b { text-align: right; font-variant-numeric: tabular-nums; }
+.bigpct { font: 400 clamp(64px, 12vw, 110px)/.9 var(--font-display); color: var(--ok); text-shadow: 0 0 18px rgba(158,211,154,.35); }
+
+/* Sources */
+.sources { margin-top: 18px; font-size: 11.5px; color: var(--dim); }
+.sources ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 2px; }
+.sources a { color: var(--ice); }
+a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-offset: 3px; }
+
+/* Narrow */
+@media (max-width: 860px) {
+  .body { grid-template-columns: minmax(0, 1fr); }
+  .index { border-right: 0; border-bottom: 1px solid var(--line); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .files { flex-direction: row; overflow-x: auto; gap: 8px; padding-bottom: 6px; }
+  .files li { flex: none; }
+  .files a { width: 160px; grid-template-columns: minmax(0, 1fr) 10px; border: 1px solid var(--line); padding: 8px 10px; }
+  .files a .f-code { grid-column: 1; }
+  .files a .f-title { grid-column: 1; }
+  .files a .pip { grid-row: 1; grid-column: 2; }
+  .files a:hover { padding-left: 10px; }
+  .files a[aria-current="page"] { border-color: var(--amber); }
+  .files a[aria-current="page"]::before { display: none; }
+  .meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .split { grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 14px 0; }
+  .split::before, .split::after { display: none; }
+  .branch { border: 1px dashed var(--line); padding: 10px 8px; }
+  .branch > .wire:first-child, .branch > .wire.grow { display: none; }
+  .log { height: 130px; }
+  .rrow { grid-template-columns: 58px minmax(0, 1fr) 42px; }
+  .rrow .bar { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .sweep { display: none; }
+}
+</style>
+
+<div class="crt" aria-hidden="true"></div>
+<div class="sweep" aria-hidden="true"></div>
+
+<div class="boot" id="boot" role="status" aria-label="System starting">
+  <span class="skip">Click or press any key to skip</span>
+  <pre id="bootText"></pre>
+</div>
+
+<div class="shell">
+  <header class="topbar">
+    <div class="brand"><b class="glowtext">WHAT IF MACHINE</b><span>Directorate of Contingencies · WARDEN terminal</span></div>
+    <div class="status"><span><i class="dot"></i>Link stable</span><span id="clock">--:--:--</span>
+      <button type="button" class="tbtn" id="profileBtn">Clearance profile</button>
+      <button type="button" class="tbtn" id="soundBtn" aria-pressed="true">Sound: on</button></div>
+  </header>
+  <div class="activebar" id="activebar" hidden role="status"></div>
+  <div class="body">
+    <nav class="index" aria-label="Incident archive">
+      <a class="ready-link" href="#readiness" id="readyLink">Readiness <b id="readyPct">0%</b></a>
+      <span class="label">Incident archive</span>
+      <div class="filters" id="filters" role="group" aria-label="Filter by category"></div>
+      <ul class="files" id="files"></ul>
+      <div class="legend"><span class="L-ROUTINE"><i class="pip"></i>Routine</span><span class="L-DISRUPTIVE"><i class="pip"></i>Disruptive</span><span class="L-CRITICAL"><i class="pip"></i>Critical</span></div>
+    </nav>
+    <main class="main">
+      <div class="wrap">
+        <section class="console" aria-label="WARDEN console">
+          <div class="console-h"><span>WARDEN // contingency assistant</span><span id="sess">Session 0000</span></div>
+          <div class="log" id="log" aria-live="polite"></div>
+          <form class="prompt" id="ask">
+            <span aria-hidden="true">&gt;</span>
+            <input id="q" type="text" autocomplete="off" placeholder="Describe what happened, e.g. my wifi is down" aria-label="Describe what happened">
+            <button class="send" type="submit">Query</button>
+          </form>
+        </section>
+        <article class="dossier" id="dossier"></article>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" hidden>
+  <section class="panel" role="dialog" aria-modal="true" aria-labelledby="ph">
+    <div class="panel-h"><b id="ph">CLEARANCE PROFILE</b><button type="button" class="tbtn" id="closeP">Close</button></div>
+    <form id="pform">
+      <label class="field"><span>Location</span><select id="pf-country"></select></label>
+      <label class="field" id="pf-region-wrap"><span>UK nation</span><select id="pf-region">
+        <option value="england">England</option><option value="scotland">Scotland</option><option value="wales">Wales</option><option value="ni">Northern Ireland</option></select></label>
+      <fieldset class="field"><legend>Budget right now</legend>
+        <div class="opts">
+          <label class="opt-in"><input type="radio" name="budget" id="pf-b-tight" value="tight"><span>Tight</span></label>
+          <label class="opt-in"><input type="radio" name="budget" id="pf-b-some" value="some"><span>Some savings</span></label>
+          <label class="opt-in"><input type="radio" name="budget" id="pf-b-comf" value="comfortable"><span>Comfortable</span></label>
+        </div></fieldset>
+      <fieldset class="field"><legend>Dependants</legend>
+        <div class="opts">
+          <label class="opt-in"><input type="checkbox" id="pf-children"><span>Children</span></label>
+          <label class="opt-in"><input type="checkbox" id="pf-pets"><span>Pets</span></label>
+          <label class="opt-in"><input type="checkbox" id="pf-carer"><span>Someone I care for</span></label>
+        </div></fieldset>
+      <fieldset class="field"><legend>Emergency contacts</legend>
+        <div class="crow"><input type="text" id="pf-c1n" placeholder="Name" aria-label="Contact 1 name"><input type="tel" id="pf-c1p" placeholder="Number" aria-label="Contact 1 number"></div>
+        <div class="crow"><input type="text" id="pf-c2n" placeholder="Name" aria-label="Contact 2 name"><input type="tel" id="pf-c2p" placeholder="Number" aria-label="Contact 2 number"></div>
+        <div class="crow"><input type="text" id="pf-c3n" placeholder="Name" aria-label="Contact 3 name"><input type="tel" id="pf-c3p" placeholder="Number" aria-label="Contact 3 number"></div>
+      </fieldset>
+      <p class="note">Saved only in this browser. Nothing is sent anywhere.</p>
+      <div class="actions"><button type="button" class="tbtn" id="clearP">Erase profile</button><button type="submit" class="send">Save profile</button></div>
+    </form>
+  </section>
+</div>
+
+<script>
+(() => {
+  const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const byId = Object.fromEntries(SCENARIOS.map(s => [s.id, s]));
+  const cats = ["All", ...new Set(SCENARIOS.map(s => s.category))];
+  const BUDGET = { tight: "Tight budget", some: "Some savings", comfortable: "Comfortable budget" };
+  let cat = "All", typeToken = 0;
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const store = {
+    get(k, d) { try { const v = JSON.parse(localStorage.getItem("wim:" + k)); return v ?? d; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem("wim:" + k, JSON.stringify(v)); } catch {} },
+    del(k) { try { localStorage.removeItem("wim:" + k); } catch {} }
+  };
+  const ss = { get(k) { try { return sessionStorage.getItem(k); } catch { return null; } }, set(k, v) { try { sessionStorage.setItem(k, v); } catch {} } };
+
+  // ---------- profile ----------
+  const DEFAULT_PROFILE = { country: "UK", region: "england", budget: "some", children: false, pets: false, carer: false, contacts: [] };
+  let hasProfile = !!store.get("profile", null);
+  let P = Object.assign({}, DEFAULT_PROFILE, store.get("profile", {}));
+  const C = () => {
+    const base = COUNTRIES[P.country] || COUNTRIES.OTHER;
+    return P.country === "UK" ? { ...base, ...(UK_REGIONS[P.region] || {}), name: base.name } : base;
+  };
+  const placeName = () => P.country === "UK" ? (UK_REGIONS[P.region] || UK_REGIONS.england).name + ", UK" : C().name;
+  const L = () => ({ ...(LINKS[P.country] || LINKS.OTHER || {}), ...(P.country === "UK" ? LINKS[P.region] || {} : {}) });
+  let usedKeys = new Set();
+
+  function matches(when) {
+    if (!when) return true;
+    if (when.country && !when.country.includes(P.country)) return false;
+    if (when.notCountry && when.notCountry.includes(P.country)) return false;
+    if (when.region && (P.country !== "UK" || !when.region.includes(P.region))) return false;
+    if (when.notRegion && P.country === "UK" && when.notRegion.includes(P.region)) return false;
+    if (when.budget && !when.budget.includes(P.budget)) return false;
+    for (const k of ["children", "pets", "carer"]) if (k in when && !!P[k] !== when[k]) return false;
+    return true;
+  }
+  // Drop nodes that don't match; collapse a decision with one branch left into its steps.
+  function tailor(nodes) {
+    const out = [];
+    for (const n of nodes) {
+      if (!matches(n.when)) continue;
+      if (n.t !== "decision") { out.push(n); continue; }
+      const branches = n.branches.filter(b => matches(b.when)).map(b => ({ ...b, flow: tailor(b.flow) })).filter(b => b.flow.length);
+      if (branches.length === 1) out.push(...branches[0].flow);
+      else if (branches.length > 1) out.push({ ...n, branches });
+    }
+    return out;
+  }
+  const fill = text => esc(text).replace(/\{(\w+)\}/g, (m, k) => {
+    const v = C()[k]; if (!v) return m;
+    usedKeys.add(k);
+    const href = L()[k];
+    return href ? `<a class="tpl" href="${esc(href)}" target="_blank" rel="noopener">${esc(v)}</a>` : `<b class="tpl">${esc(v)}</b>`;
+  });
+  const plain = text => String(text).replace(/\{(\w+)\}/g, (m, k) => C()[k] || m);
+
+  // ---------- sound (all generated, no files) ----------
+  const Sound = {
+    ctx: null, on: store.get("sound", true), hum: null, lastKey: 0,
+    init() {
+      if (this.ctx) { if (this.ctx.state === "suspended") this.ctx.resume(); return; }
+      try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return; }
+      this.out = this.ctx.createGain(); this.out.gain.value = .6; this.out.connect(this.ctx.destination);
+      const len = this.ctx.sampleRate * .05, buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate), d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 6);
+      this.noise = buf;
+      if (this.on) this.startHum();
+    },
+    startHum() {
+      if (!this.ctx || this.hum) return;
+      const c = this.ctx, g = c.createGain(), f = c.createBiquadFilter(), o1 = c.createOscillator(), o2 = c.createOscillator(), lfo = c.createOscillator(), lg = c.createGain();
+      o1.type = "sawtooth"; o1.frequency.value = 50; o2.type = "sine"; o2.frequency.value = 100;
+      f.type = "lowpass"; f.frequency.value = 160;
+      lfo.frequency.value = .2; lg.gain.value = .004; lfo.connect(lg); lg.connect(g.gain);
+      g.gain.value = 0; g.gain.linearRampToValueAtTime(.018, c.currentTime + 1.5);
+      o1.connect(f); o2.connect(f); f.connect(g); g.connect(this.out);
+      [o1, o2, lfo].forEach(o => o.start());
+      this.hum = { g, nodes: [o1, o2, lfo] };
+    },
+    stopHum() {
+      if (!this.hum) return;
+      const { g, nodes } = this.hum, t = this.ctx.currentTime;
+      g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(g.gain.value, t); g.gain.linearRampToValueAtTime(0, t + .3);
+      nodes.forEach(o => o.stop(t + .35)); this.hum = null;
+    },
+    ok() { return this.on && this.ctx && this.ctx.state === "running"; },
+    key() {
+      if (!this.ok()) return;
+      const now = performance.now(); if (now - this.lastKey < 38) return; this.lastKey = now;
+      const c = this.ctx, s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+      s.buffer = this.noise; f.type = "bandpass"; f.frequency.value = 1800 + Math.random() * 1600; f.Q.value = 3;
+      g.gain.value = .22; s.connect(f); f.connect(g); g.connect(this.out); s.start();
+    },
+    tone(freq, dur, { type = "square", vol = .05, at = 0, slide } = {}) {
+      if (!this.ok()) return;
+      const c = this.ctx, t = c.currentTime + at, o = c.createOscillator(), g = c.createGain();
+      o.type = type; o.frequency.setValueAtTime(freq, t); if (slide) o.frequency.exponentialRampToValueAtTime(slide, t + dur);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+      o.connect(g); g.connect(this.out); o.start(t); o.stop(t + dur + .02);
+    },
+    alarm() { for (let i = 0; i < 4; i++) { this.tone(880, .2, { at: i * .5, vol: .045 }); this.tone(620, .22, { at: i * .5 + .24, vol: .045 }); } },
+    chirp() { this.tone(660, .09, { type: "sine", vol: .08, slide: 1320 }); },
+    open() { this.tone(240, .12, { type: "triangle", vol: .07, slide: 480 }); },
+    boot() { this.tone(110, .5, { type: "sine", vol: .1, slide: 440 }); this.tone(880, .15, { type: "sine", vol: .05, at: .45 }); },
+    set(on) {
+      this.on = on; store.set("sound", on);
+      if (on) { this.init(); this.startHum(); this.chirp(); } else this.stopHum();
+      $("soundBtn").setAttribute("aria-pressed", on); $("soundBtn").textContent = "Sound: " + (on ? "on" : "off");
+    }
+  };
+  $("soundBtn").setAttribute("aria-pressed", Sound.on); $("soundBtn").textContent = "Sound: " + (Sound.on ? "on" : "off");
+  $("soundBtn").addEventListener("click", () => Sound.set(!Sound.on));
+  const wake = () => Sound.init();
+  addEventListener("pointerdown", wake); addEventListener("keydown", wake);
+
+  // ---------- clock + session ----------
+  $("sess").textContent = "Session " + Math.floor(1000 + Math.random() * 8999);
+  const tick = () => { $("clock").textContent = new Date().toLocaleTimeString([], { hour12: false }); renderActiveBar(); };
+  $("clock").textContent = new Date().toLocaleTimeString([], { hour12: false }); setInterval(tick, 1000);
+
+  // ---------- log ----------
+  function log(html, cls = "sys", who) {
+    const line = document.createElement("div");
+    line.className = cls;
+    line.innerHTML = (who ? `<span class="${who === "YOU" ? "you" : "who"}">${who}&gt;</span> ` : "") + html;
+    $("log").appendChild(line);
+    $("log").scrollTop = $("log").scrollHeight;
+    return line;
+  }
+  async function say(text, cls = "") {
+    const line = log("", cls, "WARDEN");
+    const span = document.createElement("span");
+    line.appendChild(span);
+    if (RM) { span.textContent = text; return; }
+    for (let i = 0; i < text.length; i += 2) { span.textContent = text.slice(0, i + 2); Sound.key(); $("log").scrollTop = $("log").scrollHeight; await sleep(12); }
+  }
+
+  // ---------- index ----------
+  $("filters").innerHTML = cats.map(c => `<button class="chip" type="button" data-cat="${esc(c)}" aria-pressed="${c === cat}">${esc(c)}</button>`).join("");
+  $("filters").addEventListener("click", e => {
+    const b = e.target.closest(".chip"); if (!b) return;
+    cat = b.dataset.cat;
+    document.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", x === b));
+    renderIndex();
+  });
+  function renderIndex() {
+    const cur = currentId();
+    $("readyPct").textContent = readiness().pct + "%";
+    if (location.hash === "#readiness") $("readyLink").setAttribute("aria-current", "page"); else $("readyLink").removeAttribute("aria-current");
+    const list = SCENARIOS.filter(s => cat === "All" || s.category === cat);
+    $("files").innerHTML = list.map(s => `
+      <li><a href="#${s.id}" class="L-${s.level}" ${s.id === cur && location.hash !== "#readiness" ? 'aria-current="page"' : ""} title="${s.level}">
+        <span class="f-code">${esc(s.code)}</span><span class="f-title">${esc(s.title)}</span><i class="pip" aria-label="${s.level}"></i>
+      </a></li>`).join("");
+  }
+
+  // ---------- flowchart ----------
+  const countSteps = nodes => nodes.reduce((n, x) => n + (x.t === "step" ? 1 : x.t === "decision" ? x.branches.reduce((m, b) => m + countSteps(b.flow), 0) : 0), 0);
+  const countTailored = nodes => nodes.reduce((n, x) => n + (x.when ? 1 : 0) + (x.t === "decision" ? x.branches.reduce((m, b) => m + countTailored(b.flow), 0) : 0), 0);
+  let d = 0;
+  const rv = () => `rv" style="--d:${d++}`;
+  function renderFlow(nodes, prefix, done) {
+    let html = "";
+    nodes.forEach((n, idx) => {
+      const no = prefix ? `${prefix}.${idx + 1}` : `${idx + 1}`;
+      if (idx > 0) html += `<div class="wire live ${rv()}"></div>`;
+      if (n.t === "step") {
+        const isDone = done.includes(n.title);
+        const tags = [n.critical ? '<span class="crit">Priority</span>' : "", n.when ? '<span class="tailor">Tailored</span>' : ""].filter(Boolean).join(" · ");
+        html += `<div class="step${n.critical ? " critical" : ""}${isDone ? " done" : ""} ${rv()}" data-key="${esc(n.title)}" data-no="${no}">
+          <div class="step-head"><span>Proc. ${no}${tags ? " · " + tags : ""}</span><span>${n.time ? esc(n.time) : ""}</span></div>
+          <label><input type="checkbox" id="p-${no}" ${isDone ? "checked" : ""}><span class="box" aria-hidden="true"></span><h4>${fill(n.title)}</h4></label>
+          <p>${fill(n.text)}</p></div>`;
+      } else if (n.t === "decision") {
+        html += `<div class="decision ${rv()}"><small>Checkpoint ${no}</small><strong>${fill(n.q)}</strong></div><div class="wire live ${rv()}"></div>`;
+        html += `<div class="split ${rv()}" style="--n:${n.branches.length}">` + n.branches.map((b, bi) => {
+          const letter = String.fromCharCode(65 + bi);
+          return `<div class="branch"><div class="wire ${rv()}"></div><span class="blabel ${rv()}">${letter} · ${esc(b.label)}</span><div class="wire ${rv()}"></div>
+            <div class="flow">${renderFlow(b.flow, no + letter, done)}</div><div class="wire grow"></div></div>`;
+        }).join("") + `</div>`;
+      }
+    });
+    return html;
+  }
+  const fixSplit = html => html.replace(/class="split rv" style="--d:(\d+)" style="--n:(\d+)"/g, 'class="split rv" style="--d:$1;--n:$2"');
+
+  function emergencyCard() {
+    const cs = (P.contacts || []).filter(c => c.name || c.phone);
+    const contacts = cs.length
+      ? cs.map((c, i) => `<span class="ct">${esc(c.name || "Contact")} <span>${esc(c.phone || "")}</span>${c.phone ? `<button type="button" data-copy="${esc(c.phone)}">Copy</button>` : ""}</span>`).join("")
+      : `<span class="none">No emergency contacts on file. <button type="button" data-profile>Add them</button></span>`;
+    const em = C().emergency, short = em.length <= 12;
+    return `<div class="ecard">
+      ${short ? `<span class="big">${esc(em)}</span>` : ""}
+      <span class="lab">Emergency line · ${esc(placeName())}</span>
+      <span>${short ? "Call this first if anyone is in danger." : "Call " + esc(em) + " first if anyone is in danger."} Crisis support: ${esc(C().crisis)}.</span>
+      <div class="contacts">${contacts}</div></div>`;
+  }
+
+  // ---------- readiness ----------
+  const prepDone = id => store.get("prep:" + id, []);
+  function readiness() {
+    let done = 0, total = 0;
+    const per = SCENARIOS.map(s => {
+      const t = (s.prep || []).length, d = prepDone(s.id).filter(x => (s.prep || []).includes(x)).length;
+      done += d; total += t;
+      return { s, d, t, pct: t ? Math.round((d / t) * 100) : 0 };
+    });
+    return { per, pct: total ? Math.round((done / total) * 100) : 0, done, total };
+  }
+  function prepHtml(s) {
+    if (!s.prep || !s.prep.length) return "";
+    const done = prepDone(s.id);
+    const n = s.prep.filter(x => done.includes(x)).length;
+    return `<h2 class="sec">Prepare in advance · ${n}/${s.prep.length}</h2>
+      <ul class="prep">${s.prep.map((x, i) => `<li><label class="${done.includes(x) ? "on" : ""}"><input type="checkbox" data-prep="${esc(x)}" id="pr-${s.id}-${i}" ${done.includes(x) ? "checked" : ""}><span class="box" aria-hidden="true"></span><span>${fill(x)}</span></label></li>`).join("")}</ul>`;
+  }
+  function renderReadiness(animate) {
+    current = null; usedKeys = new Set();
+    const r = readiness();
+    const el = $("dossier");
+    el.className = "dossier L-ROUTINE";
+    const rows = r.per.slice().sort((a, b) => a.pct - b.pct).map(x => `
+      <a class="rrow" href="#${x.s.id}"><span class="f-code">${esc(x.s.code)}</span><span>${esc(x.s.title)}</span>
+        <span class="bar"><i style="width:${x.pct}%"></i></span><b>${x.pct}%</b></a>`).join("");
+    el.innerHTML = `
+      <div class="d-top"><span>Readiness audit · all files</span><span>Calibrated for ${esc(placeName())}</span></div>
+      <h1 class="d-title" id="dt">Readiness</h1>
+      <div class="bigpct">${r.pct}%</div>
+      <p class="assess">${r.done} of ${r.total} preparation tasks complete. Open any file to tick off its "Prepare in advance" list. Lowest scores are listed first.</p>
+      <div class="rtable">${rows}</div>`;
+    if (animate && !RM) $("dt").classList.add("glitch");
+  }
+
+  // ---------- active incident ----------
+  const getActive = () => store.get("active", null);
+  const fmtClock = ms => { const s = Math.max(0, Math.floor(ms / 1000)); return [s / 3600, (s % 3600) / 60, s % 60].map(v => String(Math.floor(v)).padStart(2, "0")).join(":"); };
+  const fmtTime = t => new Date(t).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
+  function addEvent(text) {
+    const A = getActive(); if (!A || A.ended) return;
+    A.events.push({ t: Date.now(), text }); store.set("active", A);
+    if (current && current.s.id === A.id) renderIncLog();
+  }
+  function renderActiveBar() {
+    const A = getActive(), bar = $("activebar");
+    if (!A || A.ended) { if (!bar.hidden) bar.hidden = true; return; }
+    const s = byId[A.id]; if (!s) return;
+    const t = fmtClock(Date.now() - A.start);
+    if (bar.hidden || bar.dataset.id !== A.id) {
+      bar.hidden = false; bar.dataset.id = A.id;
+      bar.innerHTML = `<span>Active incident · ${esc(s.code)} ${esc(s.title)}</span><span class="timer" id="atimer">${t}</span><span class="sp"></span><a href="#${s.id}">Open file</a>`;
+    } else $("atimer").textContent = t;
+  }
+  function timelineText(A) {
+    const s = byId[A.id];
+    return [`${s.code} ${s.title}: incident log`, `Started ${new Date(A.start).toLocaleString()}`, `Location: ${placeName()}`, "",
+      ...A.events.map(e => `${fmtTime(e.t)}  ${e.text}`),
+      ...(A.ended ? ["", `Duration ${fmtClock(A.ended - A.start)}`] : [])].join("\n");
+  }
+  function incHtml(s) {
+    const A = getActive();
+    if (A && A.id === s.id) return `<div class="inclog" id="inclog"></div>`;
+    const other = A && !A.ended && byId[A.id];
+    return `<div class="progress"><button type="button" class="btn-alert" id="activate">${other ? "Switch active incident to this file" : "Start incident mode"}</button>
+      <span>Starts a timer and a timestamped log you can copy for insurers, landlords, or employers.</span></div>`;
+  }
+  function renderIncLog() {
+    const box = $("inclog"), A = getActive(); if (!box || !A) return;
+    box.innerHTML = `
+      <div class="inclog-h"><span>${A.ended ? "Incident stood down · log kept" : "Incident log · live"}</span>
+        <span class="acts"><button type="button" class="reset" id="copyLog">Copy timeline</button>
+        ${A.ended ? '<button type="button" class="reset" id="clearLog">Clear log</button>' : '<button type="button" class="btn-alert" id="standDown">Stand down</button>'}</span></div>
+      <ol>${A.events.map(e => `<li><span>${fmtTime(e.t)}</span>${esc(e.text)}</li>`).join("")}</ol>
+      ${A.ended ? "" : `<form id="noteForm"><input id="note" type="text" autocomplete="off" placeholder="Add a note, e.g. Plumber booked for 2pm" aria-label="Add a note to the incident log"><button type="submit" class="send">Log</button></form>`}`;
+    const ol = box.querySelector("ol"); ol.scrollTop = ol.scrollHeight;
+  }
+
+  // ---------- dossier ----------
+  let current = null;
+  function renderDossier(s, animate) {
+    d = 0; usedKeys = new Set();
+    const flowData = tailor(s.flow);
+    current = { s, flowData, total: countSteps(flowData) };
+    const done = store.get(s.id, []);
+    const tailored = countTailored(flowData);
+    const flow = fixSplit(`<div class="terminal ${rv()}">Incident detected</div><div class="wire live ${rv()}"></div>${renderFlow(flowData, "", done)}<div class="wire live ${rv()}"></div><div class="terminal end ${rv()}">${esc(s.end)}</div>`);
+    const crit = s.level === "CRITICAL";
+    const deps = ["children", "pets", "carer"].filter(k => P[k]).map(k => ({ children: "Children", pets: "Pets", carer: "Carer" })[k]);
+    const prep = prepHtml(s);
+    const card = crit ? emergencyCard() : "";
+    const links = L();
+    const sources = [...usedKeys].filter(k => links[k]).map(k => `<li><a href="${esc(links[k])}" target="_blank" rel="noopener">${esc(links[k].replace(/^https:\/\/(www\.)?/, "").replace(/\/$/, ""))}</a></li>`);
+    const uniq = [...new Set(sources)];
+    const el = $("dossier");
+    el.className = "dossier L-" + s.level;
+    el.innerHTML = `
+      ${crit ? `<div class="alertbar">Critical incident · ${s.quiet ? "you don't have to do this alone" : "emergency services first"}</div>` : ""}
+      <div class="d-top"><span>File ${esc(s.code)} · ${esc(s.category)}</span><span>Contingency protocol · eyes only</span></div>
+      <h1 class="d-title" id="dt">${esc(s.title)}</h1>
+      <span class="stamp">Class: ${s.level}</span>
+      ${card}
+      <dl class="meta">
+        <div><dt>Item</dt><dd>${esc(s.code)}</dd></div>
+        <div><dt>Incident class</dt><dd class="lv">${s.level}</dd></div>
+        <div><dt>Est. duration</dt><dd>${esc(s.duration)}</dd></div>
+        <div><dt>Procedures</dt><dd>${current.total}</dd></div>
+      </dl>
+      <div class="calib">Calibrated for <b>${esc(placeName())}</b><b>${BUDGET[P.budget] || "Any budget"}</b>${deps.map(x => `<b>${x}</b>`).join("")}
+        <span>${tailored ? `${tailored} step${tailored > 1 ? "s" : ""} tailored to you.` : ""}</span><button type="button" data-profile>Edit profile</button></div>
+      <h2 class="sec">WARDEN assessment</h2>
+      <p class="assess" id="assess"></p>
+      <h2 class="sec">Containment procedures</h2>
+      ${incHtml(s)}
+      <div class="progress"><span id="pc"></span><div class="bar"><i id="pb"></i></div><button type="button" class="reset" id="reset">Reset</button></div>
+      <div class="chart"><div class="flow">${flow}</div></div>
+      ${prep}
+      <div class="sources">Numbers and rules last checked ${new Date(CHECKED + "T12:00:00").toLocaleDateString([], { day: "numeric", month: "long", year: "numeric" })}. Always confirm with the official service.
+        ${uniq.length ? `<ul>${uniq.join("")}</ul>` : ""}</div>
+      <p class="disclaimer">General guidance only, not legal, financial, or medical advice. Rules differ by country and provider. If anyone is in danger, call ${esc(C().emergency)} first.</p>`;
+    renderIncLog();
+    if (!animate || RM) el.querySelectorAll(".rv").forEach(x => x.classList.remove("rv"));
+    else {
+      if (!s.quiet) $("dt").classList.add("glitch");
+      if (crit && !s.quiet) { el.classList.add("alarm"); Sound.alarm(); } else Sound.open();
+    }
+    typeAssessment(s, animate && !RM);
+    updateProgress();
+  }
+
+  async function typeAssessment(s, animate) {
+    const my = ++typeToken;
+    const el = $("assess");
+    const parts = s.summary.split(/(\[\[.+?\]\])/).filter(Boolean);
+    el.innerHTML = `<span class="tag">[${s.code}]</span> `;
+    for (const p of parts) {
+      const m = p.match(/^\[\[(.+)\]\]$/);
+      if (m) {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "redact"; b.textContent = m[1]; b.dataset.text = m[1];
+        b.setAttribute("aria-label", "Redacted text, click to decrypt");
+        el.appendChild(b);
+        continue;
+      }
+      const span = document.createElement("span"); el.appendChild(span);
+      if (!animate) { span.textContent = p; continue; }
+      const caret = document.createElement("i"); caret.className = "caret";
+      el.appendChild(caret);
+      for (let i = 0; i < p.length; i += 3) {
+        if (my !== typeToken) return;
+        span.textContent = p.slice(0, i + 3); Sound.key(); await sleep(14);
+      }
+      caret.remove();
+    }
+    if (my === typeToken) { const c = document.createElement("i"); c.className = "caret"; el.appendChild(c); }
+  }
+
+  function doneKeys() {
+    const visible = new Set([...$("dossier").querySelectorAll(".step")].map(x => x.dataset.key));
+    return store.get(current.s.id, []).filter(k => visible.has(k));
+  }
+  function updateProgress() {
+    const n = doneKeys().length, total = current.total;
+    $("pc").textContent = `${String(n).padStart(2, "0")} / ${String(total).padStart(2, "0")} procedures executed`;
+    $("pb").style.width = (total ? (n / total) * 100 : 0) + "%";
+    return n;
+  }
+
+  function decrypt(b) {
+    if (b.classList.contains("shown")) return;
+    const real = b.dataset.text, glyphs = "█▓▒░#%&@$*+=<>/\\";
+    if (RM) { b.classList.add("shown"); b.setAttribute("aria-label", real); return; }
+    b.classList.add("scramble");
+    let f = 0;
+    const iv = setInterval(() => {
+      f++; Sound.key();
+      const keep = Math.floor((f / 14) * real.length);
+      b.textContent = real.split("").map((ch, i) => i < keep || ch === " " ? ch : glyphs[Math.floor(Math.random() * glyphs.length)]).join("");
+      if (f >= 14) { clearInterval(iv); b.textContent = real; b.classList.remove("scramble"); b.classList.add("shown"); b.setAttribute("aria-label", real); }
+    }, 40);
+    log(`Declassification logged for "${esc(real)}". Clearance check skipped.`, "warn", "WARDEN");
+  }
+
+  $("dossier").addEventListener("change", e => {
+    if (e.target.type !== "checkbox") return;
+    if (e.target.dataset.prep !== undefined) {
+      const s = current.s, key = e.target.dataset.prep;
+      const done = prepDone(s.id).filter(x => x !== key);
+      if (e.target.checked) { done.push(key); Sound.chirp(); }
+      store.set("prep:" + s.id, done);
+      e.target.closest("label").classList.toggle("on", e.target.checked);
+      const n = s.prep.filter(x => done.includes(x)).length;
+      e.target.closest(".prep").previousElementSibling.textContent = `Prepare in advance · ${n}/${s.prep.length}`;
+      renderIndex();
+      if (e.target.checked) log(`Readiness updated: ${readiness().pct}% across all files.`, "sys", "WARDEN");
+      return;
+    }
+    const s = current.s, card = e.target.closest(".step"), key = card.dataset.key, no = card.dataset.no;
+    const done = store.get(s.id, []).filter(x => x !== key);
+    if (e.target.checked) done.push(key);
+    store.set(s.id, done);
+    card.classList.toggle("done", e.target.checked);
+    const n = updateProgress(), total = current.total;
+    const A = getActive();
+    if (A && A.id === s.id && !A.ended) addEvent(`${e.target.checked ? "Done" : "Reopened"}: ${plain(key)}`);
+    if (!e.target.checked) { log(`Procedure ${no} reopened.`, "sys", "WARDEN"); return; }
+    Sound.chirp();
+    if (n === total) { say(`All ${total} procedures executed. ${s.code} reclassified as CONTAINED. Good work.`); Sound.tone(523, .15, { type: "sine", vol: .07, at: .15 }); Sound.tone(784, .3, { type: "sine", vol: .07, at: .3 }); }
+    else say(`Procedure ${no} logged: ${plain(key)}. ${total - n} remaining.`);
+  });
+  $("dossier").addEventListener("click", async e => {
+    const r = e.target.closest(".redact"); if (r) decrypt(r);
+    if (e.target.closest("[data-profile]")) openProfile();
+    const cp = e.target.closest("[data-copy]");
+    if (cp) {
+      try { await navigator.clipboard.writeText(cp.dataset.copy); cp.textContent = "Copied"; }
+      catch { const sel = getSelection(), rg = document.createRange(); rg.selectNodeContents(cp.previousElementSibling); sel.removeAllRanges(); sel.addRange(rg); cp.textContent = "Selected"; }
+      setTimeout(() => { cp.textContent = "Copy"; }, 1500);
+    }
+    if (e.target.id === "activate") {
+      const s = current.s, prev = getActive();
+      store.set("active", { id: s.id, start: Date.now(), events: [{ t: Date.now(), text: `Incident opened: ${s.title}` }] });
+      if (prev && !prev.ended && prev.id !== s.id) log(`Previous incident ${byId[prev.id].code} closed.`, "warn", "WARDEN");
+      renderDossier(s, false); renderActiveBar();
+      say(`Incident mode active for ${s.code}. Timer running. Every procedure you tick is logged with the time.`, "warn");
+      Sound.tone(440, .25, { type: "square", vol: .05 }); Sound.tone(660, .3, { type: "square", vol: .05, at: .28 });
+    }
+    if (e.target.id === "standDown") {
+      addEvent("Incident stood down");
+      const A = getActive(); A.ended = Date.now(); store.set("active", A);
+      renderIncLog(); renderActiveBar(); Sound.chirp();
+      say(`${byId[A.id].code} stood down after ${fmtClock(A.ended - A.start)}. Log kept until you clear it.`);
+    }
+    if (e.target.id === "clearLog") { store.del("active"); renderDossier(current.s, false); log("Incident log cleared.", "sys", "WARDEN"); }
+    if (e.target.id === "copyLog") {
+      const text = timelineText(getActive()), btn = e.target;
+      try { await navigator.clipboard.writeText(text); btn.textContent = "Copied"; }
+      catch {
+        let ta = $("logText");
+        if (!ta) { ta = document.createElement("textarea"); ta.id = "logText"; ta.readOnly = true; ta.setAttribute("aria-label", "Incident timeline"); $("inclog").appendChild(ta); }
+        ta.value = text; ta.focus(); ta.select(); btn.textContent = "Selected, press copy";
+      }
+      setTimeout(() => { btn.textContent = "Copy timeline"; }, 2000);
+    }
+    if (e.target.id === "reset") { const s = current.s; store.set(s.id, []); renderDossier(s, true); log(`${s.code} progress purged.`, "warn", "WARDEN"); }
+  });
+
+  $("dossier").addEventListener("submit", e => {
+    if (e.target.id !== "noteForm") return;
+    e.preventDefault();
+    const v = $("note").value.trim(); if (!v) return;
+    addEvent("Note: " + v); Sound.key();
+    setTimeout(() => $("note") && $("note").focus(), 0);
+  });
+
+  // ---------- profile panel ----------
+  $("pf-country").innerHTML = Object.entries(COUNTRIES).map(([k, c]) => `<option value="${k}">${esc(c.name)}</option>`).join("");
+  let lastFocus = null;
+  function openProfile() {
+    lastFocus = document.activeElement;
+    $("pf-country").value = P.country; $("pf-region").value = P.region || "england";
+    $("pf-region-wrap").hidden = P.country !== "UK";
+    (document.querySelector(`input[name=budget][value="${P.budget}"]`) || $("pf-b-some")).checked = true;
+    ["children", "pets", "carer"].forEach(k => { $("pf-" + k).checked = !!P[k]; });
+    [0, 1, 2].forEach(i => { const c = (P.contacts || [])[i] || {}; $(`pf-c${i + 1}n`).value = c.name || ""; $(`pf-c${i + 1}p`).value = c.phone || ""; });
+    $("overlay").hidden = false; $("pf-country").focus(); Sound.open();
+  }
+  $("pf-country").addEventListener("change", () => { $("pf-region-wrap").hidden = $("pf-country").value !== "UK"; });
+  function closeProfile() { $("overlay").hidden = true; if (lastFocus) lastFocus.focus?.(); }
+  $("profileBtn").addEventListener("click", openProfile);
+  $("log").addEventListener("click", e => { if (e.target.closest("[data-profile]")) openProfile(); });
+  $("closeP").addEventListener("click", closeProfile);
+  $("overlay").addEventListener("click", e => { if (e.target === $("overlay")) closeProfile(); });
+  addEventListener("keydown", e => { if (e.key === "Escape" && !$("overlay").hidden) closeProfile(); });
+  $("pform").addEventListener("submit", e => {
+    e.preventDefault();
+    P = {
+      country: $("pf-country").value, region: $("pf-region").value,
+      budget: (document.querySelector("input[name=budget]:checked") || {}).value || "some",
+      children: $("pf-children").checked, pets: $("pf-pets").checked, carer: $("pf-carer").checked,
+      contacts: [1, 2, 3].map(i => ({ name: $(`pf-c${i}n`).value.trim(), phone: $(`pf-c${i}p`).value.trim() })).filter(c => c.name || c.phone)
+    };
+    store.set("profile", P); hasProfile = true;
+    closeProfile(); Sound.chirp();
+    route(true);
+    say(`Profile saved. Procedures recalibrated for ${placeName()}. Emergency line: ${C().emergency}.`);
+  });
+  $("clearP").addEventListener("click", () => {
+    store.del("profile"); hasProfile = false; P = Object.assign({}, DEFAULT_PROFILE);
+    closeProfile(); route(false);
+    log("Profile erased. Reverting to United Kingdom defaults.", "warn", "WARDEN");
+  });
+
+  // ---------- query ----------
+  const norm = t => t.toLowerCase().replace(/[^a-z0-9\s-]/g, " ").split(/\s+/).filter(w => w.length > 1);
+  function match(text) {
+    const words = norm(text);
+    return SCENARIOS.map(s => {
+      const kws = norm((s.keywords || "") + " " + s.title);
+      let score = 0; const hits = [];
+      for (const w of new Set(words)) {
+        if (kws.includes(w)) { score += 2; hits.push(w); }
+        else if (w.length > 3 && kws.some(k => k.length > 3 && (k.startsWith(w) || w.startsWith(k)))) { score += 1; hits.push(w); }
+      }
+      return { s, score, hits };
+    }).filter(r => r.score > 0).sort((a, b) => b.score - a.score);
+  }
+  $("ask").addEventListener("submit", async e => {
+    e.preventDefault();
+    const text = $("q").value.trim(); if (!text) return;
+    $("q").value = "";
+    log(esc(text), "you", "YOU");
+    await say("Cross-referencing contingency archive…");
+    const res = match(text);
+    if (!res.length) { await say("No file on record matches that description. Try different words, or browse the archive.", "warn"); return; }
+    const top = res[0];
+    if (top.s.matchNote) await say(plain(top.s.matchNote), "warn");
+    else if (top.s.level === "CRITICAL") await say(`Critical match. If anyone is in danger, call ${C().emergency} now.`, "warn");
+    await say(`Match: ${top.s.code} ${top.s.title.toUpperCase()} (matched on: ${top.hits.join(", ")}). Opening file.`);
+    if (res.length > 1) {
+      const alt = res.slice(1, 3).map(r => `<button type="button" class="opt" data-go="${r.s.id}">${r.s.code} ${esc(r.s.title)}</button>`).join(" · ");
+      log(`Also possible: ${alt}`, "sys", "WARDEN");
+    }
+    go(top.s.id);
+  });
+  $("log").addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b) go(b.dataset.go); });
+
+  // ---------- routing ----------
+  function currentId() { const h = location.hash.slice(1); return byId[h] ? h : SCENARIOS[0].id; }
+  function go(id) { if (location.hash.slice(1) === id) route(true); else location.hash = id; }
+  function route(animate) {
+    if (location.hash === "#readiness") renderReadiness(animate); else renderDossier(byId[currentId()], animate);
+    renderIndex();
+  }
+  window.addEventListener("hashchange", () => {
+    route(true);
+    const s = byId[currentId()];
+    if (location.hash === "#readiness") log(`Readiness audit compiled: ${readiness().pct}% prepared.`, "sys", "WARDEN");
+    else log(`File ${s.code} retrieved. Class ${s.level}.`, "sys", "WARDEN");
+    if (innerWidth <= 860) $("dossier").scrollIntoView({ block: "start", behavior: RM ? "auto" : "smooth" });
+  });
+
+  // ---------- boot ----------
+  const BOOT = [
+    "DIRECTORATE OF CONTINGENCIES // SECURE TERMINAL",
+    "BIOS rev 7.3.1 ............................ OK",
+    "Mounting incident archive ................. " + SCENARIOS.length + " files",
+    "Verifying procedure checksums ............. OK",
+    "Loading WARDEN cognitive core ............. OK",
+    "Suppressing anomalous optimism ............ OK",
+    "Reading clearance profile ................. " + (hasProfile ? placeName().toUpperCase() : "NONE, DEFAULT ENGLAND, UK"),
+    "",
+    "> WARDEN ONLINE."
+  ];
+  async function boot() {
+    const el = $("bootText"), box = $("boot");
+    let skipped = false;
+    const finish = () => {
+      if (skipped) return; skipped = true;
+      el.textContent = BOOT.join("\n");
+      Sound.init(); Sound.boot();
+      box.classList.add("out");
+      setTimeout(() => { box.hidden = true; }, RM ? 0 : 450);
+      ss.set("wim-booted", "1");
+      greet();
+    };
+    box.addEventListener("click", finish);
+    addEventListener("keydown", finish, { once: true });
+    for (const line of BOOT) {
+      if (skipped) return;
+      el.innerHTML += (line.startsWith(">") ? `<span class="hi">${esc(line)}</span>` : esc(line)) + "\n";
+      Sound.key();
+      await sleep(line ? 190 : 120);
+    }
+    await sleep(350);
+    finish();
+  }
+  function profileNudge() {
+    if (!hasProfile) log(`No clearance profile on file. Using United Kingdom defaults. <button type="button" class="opt" data-profile>Set up your profile</button>`, "sys", "WARDEN");
+  }
+  async function greet() {
+    route(true);
+    await say("WARDEN online. Describe your situation and I will retrieve the matching containment file.");
+    log("Or select an incident from the archive. Tick procedures as you execute them.", "sys", "WARDEN");
+    profileNudge();
+  }
+
+  renderActiveBar();
+  if (document.querySelector('link[rel="manifest"]') && "serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
+
+  if (RM || ss.get("wim-booted")) {
+    $("boot").hidden = true; route(false);
+    log("Session resumed. WARDEN standing by.", "sys", "WARDEN");
+    profileNudge();
+  } else {
+    route(false);
+    boot();
+  }
+})();
+</script>
+</body>
+</html>
