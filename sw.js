@@ -1,5 +1,5 @@
 // What If Machine offline cache. Bump VERSION whenever index.html changes.
-const VERSION = "wim-v1";
+const VERSION = "wim-v2";
 const CORE = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", e => {

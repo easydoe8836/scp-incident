@@ -40,13 +40,15 @@
       { t: "decision", q, branches: [ { label, flow: [ ...nodes ] } ] }
     end       closing note shown at the bottom of the flowchart
     prep      optional list of things to do in advance (feeds the readiness score)
+    icon      line drawing name (see ICONS in the app script)
+    calm      optional: true turns on calm mode while this file is open
     quiet     optional: true skips the alarm and glitch effects (used for sensitive files)
     matchNote optional line WARDEN says first when this file is matched
 -->
 <script>
 const SCENARIOS = [
   {
-    id: "wim-001", keywords: "job fired laid off layoff redundant redundancy unemployed work income sacked terminated", code: "WIM-001", title: "Lost job", category: "Work & money",
+    id: "wim-001", icon: "briefcase", keywords: "job fired laid off layoff redundant redundancy unemployed work income sacked terminated", code: "WIM-001", title: "Lost job", category: "Work & money",
     level: "DISRUPTIVE", duration: "2 to 12 weeks",
     prep: ["Build an emergency fund covering 3 months of essentials", "Keep copies of your contract and recent payslips outside work systems", "Keep your CV and profiles up to date", "Know when your notice period and any work benefits end"],
     summary: "Subject's primary income stream has been terminated with little or no warning. Observed effects include sudden budget collapse, [[mild existential dread]], and an unusually empty calendar. Containment depends on fast paperwork and an honest look at the numbers.",
@@ -80,7 +82,7 @@ const SCENARIOS = [
     end: "Incident downgraded on acceptance of a new offer."
   },
   {
-    id: "wim-002", keywords: "internet wifi wi-fi online router modem broadband offline connection network", code: "WIM-002", title: "No internet", category: "Tech",
+    id: "wim-002", icon: "wifi", keywords: "internet wifi wi-fi online router modem broadband offline connection network", code: "WIM-002", title: "No internet", category: "Tech",
     level: "ROUTINE", duration: "10 minutes to 2 days",
     prep: ["Save your provider's support number and account number offline", "Know how to turn on your phone's hotspot", "Label the modem and router so you know which is which"],
     summary: "Household network has stopped responding. Occupants report a sudden awareness of their surroundings, and in one case, [[a conversation with a family member]]. Most incidents resolve with a restart.",
@@ -110,7 +112,7 @@ const SCENARIOS = [
     end: "Connection restored. Resume scrolling at your own risk."
   },
   {
-    id: "wim-003", keywords: "power outage electricity blackout lights electric breaker fuse", code: "WIM-003", title: "Power outage", category: "Home",
+    id: "wim-003", icon: "bolt", keywords: "power outage electricity blackout lights electric breaker fuse", code: "WIM-003", title: "Power outage", category: "Home",
     level: "DISRUPTIVE", duration: "1 hour to 3 days",
     prep: ["Keep torches and spare batteries where you can find them in the dark", "Keep a charged power bank", "Save the power cut number for your area in your phone", "Find your breaker panel and label the switches"],
     summary: "Electrical supply to the residence has ceased. The refrigerator has begun a slow countdown. Personnel are advised that candles are [[considerably more flammable than they look]].",
@@ -142,7 +144,7 @@ const SCENARIOS = [
     end: "Power restored. Reset the clocks on the oven and microwave."
   },
   {
-    id: "wim-004", keywords: "wallet purse cards card credit debit lost id license licence money", code: "WIM-004", title: "Lost wallet", category: "Work & money",
+    id: "wim-004", icon: "wallet", keywords: "wallet purse cards card credit debit lost id license licence money", code: "WIM-004", title: "Lost wallet", category: "Work & money",
     level: "DISRUPTIVE", duration: "1 day to 3 weeks",
     prep: ["Write down your bank's card-loss numbers somewhere other than your wallet", "Turn on card freeze in your banking apps", "Carry only the cards you need", "Keep photos of your ID stored securely"],
     summary: "Subject's wallet, including payment cards and identification, is no longer in subject's possession. Its current location is [[almost certainly the last place you looked]]. Speed matters more than searching.",
@@ -165,7 +167,7 @@ const SCENARIOS = [
     end: "Contents replaced. Consider carrying fewer cards."
   },
   {
-    id: "wim-005", keywords: "phone mobile cell iphone android stolen lost device", code: "WIM-005", title: "Phone lost or stolen", category: "Tech",
+    id: "wim-005", icon: "phone", keywords: "phone mobile cell iphone android stolen lost device", code: "WIM-005", title: "Phone lost or stolen", category: "Tech",
     level: "CRITICAL", duration: "1 hour to 1 week",
     prep: ["Turn on Find My or Find My Device", "Turn on automatic cloud backups", "Set a strong passcode, not a 4-digit one", "Write down your carrier's number and your phone's IMEI"],
     summary: "Subject's primary communication device has gone missing. It carries [[every password subject has ever saved]] and the keys to most of their accounts. Lock it down first, search second.",
@@ -195,7 +197,7 @@ const SCENARIOS = [
     end: "Device secured. Turn on automatic backups if they weren't on."
   },
   {
-    id: "wim-006", keywords: "locked lockout keys key door home house apartment", code: "WIM-006", title: "Locked out of home", category: "Home",
+    id: "wim-006", icon: "key", keywords: "locked lockout keys key door home house apartment", code: "WIM-006", title: "Locked out of home", category: "Home",
     level: "ROUTINE", duration: "30 minutes to 3 hours",
     prep: ["Leave a spare key with someone you trust", "Save a licensed locksmith's number", "Fit a coded key safe if you live alone"],
     summary: "Subject is on the wrong side of their own front door. Keys were last seen [[on the kitchen counter, in plain view, mocking them]].",
@@ -215,7 +217,7 @@ const SCENARIOS = [
     end: "Back inside. Put the keys somewhere boring and consistent."
   },
   {
-    id: "wim-007", keywords: "car breakdown broke down vehicle tire tyre battery road highway motorway", code: "WIM-007", title: "Car breakdown", category: "Travel",
+    id: "wim-007", icon: "car", keywords: "car breakdown broke down vehicle tire tyre battery road highway motorway", code: "WIM-007", title: "Car breakdown", category: "Travel",
     level: "CRITICAL", duration: "1 to 4 hours",
     prep: ["Save your breakdown cover number in your phone", "Keep a warning triangle, hi-vis vest, and torch in the car", "Check your tyres, including the spare, every month", "Keep water and a warm layer in the car"],
     summary: "Vehicle has stopped functioning while in motion. The primary danger is [[other drivers]], not the car itself. Visibility and distance from traffic come first.",
@@ -244,7 +246,7 @@ const SCENARIOS = [
     end: "Vehicle recovered. Book the service you've been putting off."
   },
   {
-    id: "wim-008", keywords: "water leak pipe burst flood flooding plumbing ceiling drip", code: "WIM-008", title: "Water leak or burst pipe", category: "Home",
+    id: "wim-008", icon: "drop", keywords: "water leak pipe burst flood flooding plumbing ceiling drip", code: "WIM-008", title: "Water leak or burst pipe", category: "Home",
     level: "CRITICAL", duration: "1 day to 2 weeks",
     prep: ["Find your stopcock and check it turns", "Know where your fuse box is", "Check your home insurance covers escape of water", "Save a plumber's number"],
     summary: "Uncontained water is entering the living space. Every minute adds to the damage. [[The ceiling bulge is not a design feature.]]",
@@ -267,7 +269,7 @@ const SCENARIOS = [
     end: "Leak contained. Learn where your stopcock is before you need it."
   },
   {
-    id: "wim-009", keywords: "hacked hack account password compromised scam login breach", code: "WIM-009", title: "Account hacked", category: "Tech",
+    id: "wim-009", icon: "lock", keywords: "hacked hack account password compromised scam login breach", code: "WIM-009", title: "Account hacked", category: "Tech",
     level: "CRITICAL", duration: "1 hour to 2 weeks",
     prep: ["Use a password manager with unique passwords", "Turn on two-factor sign-in for your email first", "Save your account recovery codes somewhere safe", "Check that your recovery email and phone are current"],
     summary: "An unauthorised party has gained access to one of subject's online accounts. Signs include unfamiliar logins, messages subject did not send, and [[an alarming interest in crypto]].",
@@ -297,7 +299,7 @@ const SCENARIOS = [
     end: "Account secured. Turn on two-factor sign-in everywhere else, too."
   },
   {
-    id: "wim-010", keywords: "flight plane missed airport airline gate travel", code: "WIM-010", title: "Missed flight", category: "Travel",
+    id: "wim-010", icon: "plane", keywords: "flight plane missed airport airline gate travel", code: "WIM-010", title: "Missed flight", category: "Travel",
     level: "DISRUPTIVE", duration: "2 hours to 2 days",
     prep: ["Turn on flight alerts in the airline app", "Buy travel insurance when you book", "Save the airline's support number", "Leave extra time for security at busy airports"],
     summary: "Aircraft has departed without subject on board. Subject is located [[at gate B47, staring]]. Options shrink with every hour, so move quickly.",
@@ -319,7 +321,7 @@ const SCENARIOS = [
     end: "Rebooked. Leave earlier next time."
   },
   {
-    id: "wim-011", keywords: "laptop computer pc died dead broken spill coffee data backup", code: "WIM-011", title: "Laptop died", category: "Tech",
+    id: "wim-011", icon: "laptop", keywords: "laptop computer pc died dead broken spill coffee data backup", code: "WIM-011", title: "Laptop died", category: "Tech",
     level: "DISRUPTIVE", duration: "1 day to 2 weeks",
     prep: ["Turn on automatic cloud backups", "Keep a second backup on an external drive", "Keep drinks away from the keyboard", "Make sure two-factor codes work on more than one device"],
     summary: "Subject's primary work device has stopped responding. Last known actions include [[a full cup of coffee]]. The machine can be replaced; the files may not.",
@@ -347,7 +349,7 @@ const SCENARIOS = [
     end: "Device restored or replaced. Keep drinks off the desk."
   },
   {
-    id: "wim-012", keywords: "bill pay rent mortgage debt payment broke afford money", code: "WIM-012", title: "Can't pay a bill", category: "Work & money",
+    id: "wim-012", icon: "receipt", keywords: "bill pay rent mortgage debt payment broke afford money", code: "WIM-012", title: "Can't pay a bill", category: "Work & money",
     level: "DISRUPTIVE", duration: "1 week to 3 months",
     prep: ["List your bills and due dates in one place", "Set up a small buffer fund", "Use direct debits for priority bills", "Save a free debt advice number"],
     summary: "A payment is due and the funds are not there. Avoidance increases the severity. [[The envelope will not open itself.]]",
@@ -369,7 +371,7 @@ const SCENARIOS = [
     end: "Payment arranged. Build a small buffer fund when you can."
   },
   {
-    id: "wim-013", keywords: "medical emergency hurt injured injury collapse collapsed unconscious chest pain stroke bleeding breathing ambulance heart attack seizure fit overdose fainted sick ill", code: "WIM-013", title: "Medical emergency", category: "Health",
+    id: "wim-013", icon: "pulse", calm: true, keywords: "medical emergency hurt injured injury collapse collapsed unconscious chest pain stroke bleeding breathing ambulance heart attack seizure fit overdose fainted sick ill", code: "WIM-013", title: "Medical emergency", category: "Health",
     level: "CRITICAL", duration: "Minutes matter",
     prep: ["Take a first aid course", "Learn the signs of a stroke and heart attack", "Keep a first aid kit at home and in the car", "Know where the nearest defibrillator is"],
     summary: "A person in subject's vicinity requires urgent medical attention. WARDEN is not a medical professional and will [[route you to one immediately]]. Call first. Read second.",
@@ -402,7 +404,7 @@ const SCENARIOS = [
     end: "Patient in professional care. Consider a first aid course."
   },
   {
-    id: "wim-014", keywords: "breakup break broke dumped divorce separated separation relationship partner boyfriend girlfriend husband wife split ex", code: "WIM-014", title: "Relationship breakup", category: "Life",
+    id: "wim-014", icon: "heart", keywords: "breakup break broke dumped divorce separated separation relationship partner boyfriend girlfriend husband wife split ex", code: "WIM-014", title: "Relationship breakup", category: "Life",
     level: "DISRUPTIVE", duration: "Weeks to months",
     prep: ["Keep your own bank account alongside any joint one", "Keep copies of your ID and important documents", "Know who you'd call or stay with in a crisis"],
     summary: "A long-term partnership has been dissolved. Shared assets, shared passwords, and [[a shared streaming account]] remain entangled. Prioritise safety, then logistics, then recovery.",
@@ -426,7 +428,7 @@ const SCENARIOS = [
     end: "Situation stabilised. Recovery is not linear; that's normal."
   },
   {
-    id: "wim-015", keywords: "death died dead passed away bereavement bereaved funeral grief grieving lost someone mum dad mother father parent relative family", code: "WIM-015", title: "Someone has died", category: "Life",
+    id: "wim-015", icon: "candle", calm: true, keywords: "death died dead passed away bereavement bereaved funeral grief grieving lost someone mum dad mother father parent relative family", code: "WIM-015", title: "Someone has died", category: "Life",
     level: "DISRUPTIVE", duration: "Weeks to months",
     prep: ["Make or update your will", "Tell someone where your important papers are", "Write down your own funeral wishes", "Keep a list of your accounts and policies"],
     summary: "A person close to subject has died. WARDEN will handle the paperwork sequence. [[The rest is not a procedure.]] Take it one step at a time; very little has to happen today.",
@@ -456,7 +458,7 @@ const SCENARIOS = [
     end: "Administrative sequence complete. Grief has no deadline."
   },
   {
-    id: "wim-016", keywords: "debt debts owe owing loan loans credit card arrears bailiffs bailiff collectors collection overdraft spiralling ccj", code: "WIM-016", title: "Debt out of control", category: "Work & money",
+    id: "wim-016", icon: "coins", keywords: "debt debts owe owing loan loans credit card arrears bailiffs bailiff collectors collection overdraft spiralling ccj", code: "WIM-016", title: "Debt out of control", category: "Work & money",
     level: "CRITICAL", duration: "1 to 6 months",
     prep: ["Know your total debts and interest rates", "Keep a monthly budget", "Save a free debt advice number", "Avoid borrowing to cover everyday costs"],
     summary: "Subject's outstanding obligations are growing faster than repayments. Minimum payments are [[feeding the problem, not shrinking it]]. Free advice changes the outcome more than anything else on this list.",
@@ -482,7 +484,7 @@ const SCENARIOS = [
     end: "Plan agreed. Keep paying what you agreed, and keep the adviser's number."
   },
   {
-    id: "wim-017", keywords: "landlord tenant rent renting deposit eviction evicted evict notice repairs repair mould mold damp letting agent lease tenancy", code: "WIM-017", title: "Landlord dispute", category: "Home",
+    id: "wim-017", icon: "house", keywords: "landlord tenant rent renting deposit eviction evicted evict notice repairs repair mould mold damp letting agent lease tenancy", code: "WIM-017", title: "Landlord dispute", category: "Home",
     level: "DISRUPTIVE", duration: "2 weeks to 3 months",
     prep: ["Keep a copy of your tenancy agreement", "Take dated photos at check-in", "Keep all landlord messages in writing", "Know your deposit scheme details"],
     summary: "Relations between subject and property owner have degraded. Communications consist largely of [[read receipts]]. Paper trails win housing disputes.",
@@ -512,7 +514,7 @@ const SCENARIOS = [
     end: "Dispute resolved or escalated correctly. Keep the paper trail."
   },
   {
-    id: "wim-018", keywords: "flood flooding storm hurricane wildfire bushfire earthquake tornado weather warning evacuate evacuation disaster natural heatwave snow wind", code: "WIM-018", title: "Flood or severe weather", category: "Home",
+    id: "wim-018", icon: "cloud", keywords: "flood flooding storm hurricane wildfire bushfire earthquake tornado weather warning evacuate evacuation disaster natural heatwave snow wind", code: "WIM-018", title: "Flood or severe weather", category: "Home",
     level: "CRITICAL", duration: "Hours to weeks",
     prep: ["Sign up for flood or weather warnings for your area", "Pack a grab bag with medication, documents, cash, and a torch", "Know how to turn off gas, electricity, and water", "Check your home insurance covers flood and storm damage"],
     summary: "An environmental event is approaching or affecting subject's area. Property is replaceable. Personnel are not. [[Floodwater is deeper and faster than it looks.]]",
@@ -538,7 +540,7 @@ const SCENARIOS = [
     end: "Threat passed. Keep the grab bag packed."
   },
   {
-    id: "wim-019", keywords: "car accident crash crashed collision collided bumped hit rear-ended rear ended prang road traffic accident rta", code: "WIM-019", title: "Car accident", category: "Travel",
+    id: "wim-019", icon: "crash", keywords: "car accident crash crashed collision collided bumped hit rear-ended rear ended prang road traffic accident rta", code: "WIM-019", title: "Car accident", category: "Travel",
     level: "CRITICAL", duration: "1 hour to 6 weeks",
     summary: "Subject's vehicle has been involved in a collision. Adrenaline is high and memory is unreliable. Safety first, then [[evidence, before everyone's story changes]].",
     prep: ["Keep a warning triangle, hi-vis vest, and torch in the car", "Save your insurer's claims number in your phone", "Fit a dashcam or know how to start video recording quickly", "Keep a pen and paper in the glovebox"],
@@ -562,7 +564,7 @@ const SCENARIOS = [
     end: "Incident reported. Keep every photo and letter until the claim closes."
   },
   {
-    id: "wim-020", keywords: "scam scammed scammer fraud fraudster phishing suspicious call text message email bank called hmrc irs impersonation sent money transferred gave details safe account", code: "WIM-020", title: "Scam call or message", category: "Tech",
+    id: "wim-020", icon: "hook", keywords: "scam scammed scammer fraud fraudster phishing suspicious call text message email bank called hmrc irs impersonation sent money transferred gave details safe account", code: "WIM-020", title: "Scam call or message", category: "Tech",
     level: "CRITICAL", duration: "1 hour to 4 weeks",
     summary: "An unknown party has contacted subject while impersonating a trusted organisation. Urgency is the weapon. [[Your bank will never ask you to move money to a safe account.]]",
     prep: ["Agree a family code word for urgent calls asking for money", "Save your bank's fraud number in your phone", "Turn on two-factor sign-in for email and banking", "Turn on unknown caller filtering on your phone"],
@@ -587,7 +589,7 @@ const SCENARIOS = [
     end: "Threat neutralised. Hang up first, verify second."
   },
   {
-    id: "wim-021", quiet: true, keywords: "suicidal suicide self harm self-harm hurt myself harm myself kill myself want to die crisis panic attack breakdown overwhelmed cope depressed depression anxiety mental health hopeless", code: "WIM-021", title: "Mental health crisis", category: "Health",
+    id: "wim-021", icon: "talk", calm: true, quiet: true, keywords: "suicidal suicide self harm self-harm hurt myself harm myself kill myself want to die crisis panic attack breakdown overwhelmed cope depressed depression anxiety mental health hopeless", code: "WIM-021", title: "Mental health crisis", category: "Health",
     level: "CRITICAL", duration: "Right now",
     matchNote: "You're not alone. If you or someone else is in immediate danger, call {emergency} now.",
     summary: "You, or someone near you, is in emotional crisis. WARDEN is software and can't help the way a person can. These steps connect you to people who can, right now.",
@@ -609,7 +611,7 @@ const SCENARIOS = [
     end: "You made it through this moment. Keep your safety plan and crisis numbers close."
   },
   {
-    id: "wim-022", keywords: "pet dog cat puppy kitten rabbit animal vet ate eaten poisoned poison toxic chocolate grapes injured hit by car bleeding collapsed seizure bloat", code: "WIM-022", title: "Pet emergency", category: "Home",
+    id: "wim-022", icon: "paw", keywords: "pet dog cat puppy kitten rabbit animal vet ate eaten poisoned poison toxic chocolate grapes injured hit by car bleeding collapsed seizure bloat", code: "WIM-022", title: "Pet emergency", category: "Home",
     level: "CRITICAL", duration: "Minutes to hours",
     summary: "A non-human member of the household requires urgent attention. Subject reports the animal has eaten [[something it absolutely should not have]]. Ring the vet before you search the internet.",
     prep: ["Save your vet's number and the nearest out-of-hours emergency vet", "Check what your pet insurance covers for emergencies", "Keep a pet carrier and old towels where you can grab them", "Store chocolate, grapes, raisins, and medicines out of reach"],
@@ -766,7 +768,7 @@ const LINKS = {
 html, body { height: 100%; }
 body {
   background: var(--bg); color: var(--fg); font-family: var(--font-mono); font-size: 14px; line-height: 1.55;
-  background-image: radial-gradient(ellipse at 50% 30%, #1d1912 0%, var(--bg) 70%);
+  background-image: radial-gradient(ellipse at 50% 30%, var(--bg-glow) 0%, var(--bg) 70%);
   background-attachment: fixed;
 }
 ::selection { background: var(--amber); color: var(--bg); }
@@ -775,7 +777,7 @@ a, button, input { font: inherit; color: inherit; }
 
 /* CRT layer */
 .crt { pointer-events: none; position: fixed; inset: 0; z-index: 50;
-  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.22) 2px 3px);
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, var(--scan) 2px 3px);
   mix-blend-mode: multiply; }
 .crt::after { content: ""; position: absolute; inset: 0;
   background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,.55) 100%); }
@@ -812,7 +814,7 @@ a, button, input { font: inherit; color: inherit; }
 
 .body { display: grid; grid-template-columns: 290px minmax(0, 1fr); min-height: 0; }
 .index {
-  border-right: 1px solid var(--line); background: rgba(19,17,13,.7);
+  border-right: 1px solid var(--line); background: color-mix(in srgb, var(--panel) 70%, transparent);
   padding-block: 18px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: 14px;
   display: flex; flex-direction: column; gap: 14px;
 }
@@ -820,7 +822,7 @@ a, button, input { font: inherit; color: inherit; }
 .filters { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; background: transparent; border: 1px solid var(--line); color: var(--dim); padding: 3px 8px; cursor: pointer; }
 .chip:hover { border-color: var(--dim); }
-.chip[aria-pressed="true"] { background: var(--amber); color: var(--bg); border-color: var(--amber); }
+.chip[aria-pressed="true"] { background: var(--amber); color: var(--on-accent); border-color: var(--amber); }
 .files { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .files a {
   display: grid; grid-template-columns: 58px minmax(0, 1fr) 10px; gap: 8px; align-items: baseline;
@@ -858,7 +860,7 @@ a, button, input { font: inherit; color: inherit; }
 .prompt input::placeholder { color: var(--dim); }
 .prompt input:focus-visible { outline: none; }
 .prompt:focus-within { box-shadow: inset 0 0 0 1px var(--amber); }
-.send { background: var(--amber); color: var(--bg); border: 0; padding: 4px 10px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+.send { background: var(--amber); color: var(--on-accent); border: 0; padding: 4px 10px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
 
 /* Dossier */
 .dossier { border: 1px solid var(--line); background: var(--panel); padding: clamp(16px, 3.5vw, 36px); position: relative; overflow: hidden; }
@@ -1062,6 +1064,161 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .sweep { display: none; }
 }
+/* ===== Themes ===== */
+:root { --bg-glow: #1d1912; --scan: rgba(0,0,0,.22); --base: 14px; --title-font: var(--font-display); --on-accent: #0c0b09; }
+:root[data-theme-ui="paper"] {
+  --bg: #e3e5de; --panel: #f3f4ef; --panel-2: #eaece5; --fg: #1c201e; --dim: #59625d; --line: #b5bab0;
+  --amber: #9a3412; --alert: #b3261e; --ok: #2c6a43; --ice: #285a72; --glow: transparent; --bg-glow: #eef0ea;
+  --scan: rgba(0,0,0,0); --title-font: "IBM Plex Mono", ui-monospace, Menlo, monospace; --on-accent: #f3f4ef;
+  color-scheme: light;
+}
+:root[data-theme-ui="paper"] .crt, :root[data-theme-ui="paper"] .sweep { display: none; }
+:root[data-theme-ui="paper"] .d-title { font-weight: 700; letter-spacing: -.01em; font-size: clamp(32px, 6vw, 54px); line-height: 1.02; }
+:root[data-theme-ui="paper"] .brand b { font-family: var(--title-font); font-weight: 700; font-size: 20px; }
+:root[data-theme-ui="paper"] .dossier { box-shadow: 0 1px 0 var(--line), 0 10px 30px rgba(40,40,30,.08); }
+:root[data-theme-ui="paper"] .redact { background: var(--fg); }
+:root[data-theme-ui="paper"] .stamp { transform: rotate(-3deg); }
+:root[data-theme-ui="paper"] .activebar { background: #f6dcd8; }
+.calm-on { --bg: #101112; --panel: #17191b; --panel-2: #1d2023; --fg: #f4f4f2; --dim: #b9bdb8; --line: #3b4045;
+  --amber: #f2c37a; --alert: #ff8a7f; --ok: #a8dca4; --ice: #9fd3de; --glow: transparent; --bg-glow: #101112; --scan: rgba(0,0,0,0); --base: 16px; }
+:root[data-theme-ui="paper"].calm-on { --bg: #f4f4f0; --panel: #ffffff; --panel-2: #f6f6f2; --fg: #111; --dim: #3e4441; --line: #9aa09a;
+  --amber: #7a2a0e; --alert: #9e1c14; --ok: #1f5a35; --ice: #1e4a5e; --bg-glow: #f4f4f0; }
+.calm-on .crt, .calm-on .sweep { display: none; }
+.calm-on .d-title { text-shadow: none; }
+.calm-on .wire.live::after { display: none; }
+.calm-on body, body.calm-text { font-size: var(--base); }
+.calm-on .step h4 { font-size: 16px; }
+.calm-on .step p { font-size: 14.5px; color: var(--fg); }
+.calm-on .assess { font-size: 16px; }
+.calmflag { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ice); border: 1px solid var(--ice); padding: 2px 8px; }
+
+/* ===== Icons ===== */
+.ico { width: 22px; height: 22px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.ico-frame { position: relative; display: inline-grid; place-items: center; width: 64px; height: 64px; color: var(--amber); border: 1px solid var(--line); }
+.ico-frame::before, .ico-frame::after { content: ""; position: absolute; width: 8px; height: 8px; border-color: var(--amber); border-style: solid; }
+.ico-frame::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.ico-frame::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+.ico-frame .ico { width: 40px; height: 40px; stroke-width: 1.2; }
+.ico-frame small { position: absolute; bottom: -16px; left: 0; right: 0; text-align: center; font-size: 9px; letter-spacing: .14em; color: var(--dim); }
+.d-head { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; margin-top: 14px; }
+.d-head > div { min-width: 0; flex: 1; }
+.d-head .d-title { margin-top: 0; }
+.files a { grid-template-columns: 22px 54px minmax(0, 1fr) 10px; }
+.files a .ico { color: var(--dim); width: 18px; height: 18px; }
+.files a[aria-current="page"] .ico, .files a:hover .ico { color: var(--amber); }
+
+/* ===== Facility map ===== */
+.map-wrap { overflow-x: auto; margin-top: 16px; }
+.map { display: grid; gap: 0; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-rows: minmax(120px, auto); min-width: 640px;
+  border: 3px solid var(--fg); position: relative; background:
+  repeating-linear-gradient(45deg, transparent 0 10px, rgba(128,128,128,.06) 10px 11px); }
+.sector { position: relative; border: 2px solid var(--fg); margin: -1px; padding: 12px 12px 14px; background: var(--panel); display: flex; flex-direction: column; gap: 8px; min-width: 0; transition: box-shadow .3s, background .3s; }
+.sector::after { content: ""; position: absolute; width: 34px; height: 4px; background: var(--panel); bottom: -3px; left: 22px; }
+.sector.door-r::before { content: ""; position: absolute; width: 4px; height: 30px; background: var(--panel); right: -3px; top: 20px; }
+.sector:hover { background: var(--panel-2); }
+.sector.hot { box-shadow: inset 0 0 0 2px var(--lvl), inset 0 0 26px color-mix(in srgb, var(--lvl) 22%, transparent); }
+.sec-h { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.sec-h b { font: 400 24px/1 var(--title-font); letter-spacing: .06em; text-transform: uppercase; color: var(--fg); }
+:root[data-theme-ui="paper"] .sec-h b { font-size: 15px; font-weight: 700; }
+.sec-h span { font-size: 10px; letter-spacing: .14em; color: var(--dim); text-transform: uppercase; }
+.sec-ready { display: flex; align-items: center; gap: 8px; font-size: 10.5px; color: var(--dim); font-variant-numeric: tabular-nums; }
+.sec-ready .bar { min-width: 40px; height: 5px; }
+.sec-files { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.sec-files a { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-size: 11.5px; border: 1px solid var(--line); padding: 3px 7px 3px 5px; background: var(--panel-2); color: var(--fg); }
+.sec-files a:hover { border-color: var(--amber); color: var(--amber); }
+.sec-files .ico { width: 15px; height: 15px; }
+.sec-files i.pip { width: 6px; height: 6px; }
+.a-work { grid-column: 1 / 4; grid-row: 1; } .a-tech { grid-column: 4 / 7; grid-row: 1; } .a-home { grid-column: 1 / 3; grid-row: 2 / 4; }
+.a-travel { grid-column: 3 / 5; grid-row: 2; } .a-health { grid-column: 5 / 7; grid-row: 2; } .a-life { grid-column: 3 / 7; grid-row: 3; }
+.map-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; font-size: 11px; color: var(--dim); }
+.compass { position: absolute; right: 10px; top: -30px; font-size: 10px; letter-spacing: .2em; color: var(--dim); }
+.home-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+/* ===== Drawer + stamp transitions ===== */
+.dossier.opening { animation: drawer .55s cubic-bezier(.2,.9,.25,1) both; transform-origin: 50% 0; }
+@keyframes drawer { 0% { transform: perspective(1200px) translateY(40px) rotateX(9deg); opacity: 0; } 60% { opacity: 1; } 100% { transform: none; } }
+.dossier.opening .stamp { animation: thump .45s cubic-bezier(.3,1.7,.5,1) .45s both; }
+@keyframes thump { 0% { transform: scale(2.6) rotate(-12deg); opacity: 0; } 70% { transform: scale(.94) rotate(-3deg); opacity: 1; } 100% { transform: scale(1) rotate(0); } }
+:root[data-theme-ui="paper"] .dossier.opening .stamp { animation-name: thumpPaper; }
+@keyframes thumpPaper { 0% { transform: scale(2.6) rotate(-12deg); opacity: 0; } 70% { transform: scale(.94) rotate(-4deg); opacity: 1; } 100% { transform: rotate(-3deg); } }
+.redact { position: relative; }
+.redact.peel::after { content: ""; position: absolute; inset: 0; background: var(--fg); transform-origin: right; animation: peel .5s ease-in forwards; }
+@keyframes peel { to { transform: scaleX(0) skewX(-20deg); } }
+.calm-on .dossier.opening, .calm-on .dossier.opening .stamp { animation: none; }
+
+/* ===== Guide mode ===== */
+.guide { position: fixed; inset: 0; z-index: 46; background: var(--bg); display: flex; flex-direction: column;
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.g-top { display: flex; align-items: center; gap: 12px; padding-block: 12px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); border-bottom: 1px solid var(--line); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+.g-top .sp { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.g-dots { display: flex; gap: 4px; padding: 10px max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px)); flex-wrap: wrap; }
+.g-dots i { width: 18px; height: 4px; background: var(--line); }
+.g-dots i.d { background: var(--ok); } .g-dots i.c { background: var(--amber); }
+.g-body { flex: 1; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; max-width: 720px; width: 100%; margin: 0 auto;
+  padding-block: 24px; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); touch-action: pan-y; }
+.g-card { animation: gIn .3s ease-out both; }
+.g-card.back { animation-name: gBack; }
+@keyframes gIn { from { opacity: 0; transform: translateX(40px); } }
+@keyframes gBack { from { opacity: 0; transform: translateX(-40px); } }
+.g-meta { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); display: flex; gap: 12px; flex-wrap: wrap; }
+.g-meta .crit { color: var(--alert); }
+.g-title { font: 400 clamp(38px, 9vw, 64px)/1 var(--title-font); color: var(--amber); margin: 12px 0 14px; text-wrap: balance; }
+:root[data-theme-ui="paper"] .g-title, .calm-on .g-title { font-family: var(--font-body, var(--font-mono)); font-weight: 700; font-size: clamp(28px, 7vw, 44px); line-height: 1.1; }
+.g-text { font-size: 18px; line-height: 1.6; margin: 0; max-width: 60ch; }
+.g-text .tpl { font-weight: 600; }
+.g-q { color: var(--ice); }
+.g-branches { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+.g-branches button { text-align: left; font-size: 17px; padding: 16px 18px; background: var(--panel); border: 1px solid var(--ice); color: var(--fg); cursor: pointer; }
+.g-branches button:hover, .g-branches button.sel { background: color-mix(in srgb, var(--ice) 15%, var(--panel)); }
+.g-done-tag { display: inline-block; margin-top: 16px; color: var(--ok); border: 1px solid var(--ok); padding: 2px 8px; font-size: 12px; letter-spacing: .12em; }
+.g-actions { display: flex; gap: 10px; padding: 12px max(16px, env(safe-area-inset-right, 0px)) 12px max(16px, env(safe-area-inset-left, 0px)); border-top: 1px solid var(--line); }
+.g-actions button { flex: 1; min-height: 56px; font-size: 15px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; border: 1px solid var(--line); background: var(--panel); color: var(--fg); }
+.g-actions .g-next { flex: 2; background: var(--ok); color: var(--on-accent); border-color: var(--ok); font-weight: 600; }
+.g-actions button:disabled { opacity: .35; cursor: default; }
+.g-sos { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--alert); color: #fff;
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px)); font-size: 13px; }
+.g-sos b { font: 400 30px/1 var(--font-display); letter-spacing: .06em; user-select: all; }
+:root[data-theme-ui="paper"] .g-sos b { font-family: var(--font-mono); font-weight: 700; font-size: 22px; }
+.g-sos button { background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.6); color: #fff; padding: 6px 10px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+.g-hint { text-align: center; font-size: 11px; color: var(--dim); padding-bottom: 4px; }
+.guide-btn { background: var(--ok); color: var(--on-accent); border: 0; padding: 8px 14px; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+.guide-btn:hover { filter: brightness(1.1); }
+
+/* ===== Settings ===== */
+.range { display: flex; align-items: center; gap: 10px; }
+.range input { flex: 1; accent-color: var(--amber); }
+.range output { width: 3ch; text-align: right; font-variant-numeric: tabular-nums; color: var(--dim); }
+
+/* ===== Tab bar (phones) ===== */
+.tabbar { display: none; }
+@media (max-width: 720px) {
+  .tabbar { display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 35; background: var(--panel); border-top: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+  .tabbar button { background: none; border: 0; color: var(--dim); display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 9px 2px 8px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; min-height: 56px; cursor: pointer; }
+  .tabbar button .ico { width: 22px; height: 22px; }
+  .tabbar button[aria-current="true"] { color: var(--amber); box-shadow: inset 0 2px 0 var(--amber); }
+  .shell { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+  body[data-view="files"] .main, body[data-view="ask"] .index, body[data-view="ask"] .dossier,
+  body[data-view="main"] .index, body[data-view="main"] .console { display: none; }
+  body[data-view="files"] .index { border-bottom: 0; }
+  body[data-view="ask"] .log { height: calc(100vh - 290px); min-height: 220px; }
+  .files { flex-direction: column; overflow: visible; gap: 0; }
+  .files a { width: auto; grid-template-columns: 22px 54px minmax(0, 1fr) 10px; border: 0; border-bottom: 1px dashed var(--line); padding: 14px 6px; min-height: 52px; }
+  .files a .f-code, .files a .f-title { grid-column: auto; }
+  .files a .pip { grid-row: auto; grid-column: auto; }
+  .topbar .status > span:first-child, .topbar .brand > span { display: none; }
+  .topbar { padding-block: 8px; }
+  .brand b { font-size: 24px; }
+  .step { max-width: none; }
+  .step label { padding: 6px 0; }
+  .box { width: 22px; height: 22px; }
+  .step p { margin-left: 32px; font-size: 13.5px; }
+  .chart { overflow-x: visible; }
+  .g-actions button { min-height: 60px; }
+  .profile-tab-hide { display: none; }
+  .map { grid-template-columns: minmax(0, 1fr); min-width: 0; }
+  .map .sector { grid-column: 1 / -1; grid-row: auto; }
+}
 </style>
 
 <div class="crt" aria-hidden="true"></div>
@@ -1076,7 +1233,8 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
   <header class="topbar">
     <div class="brand"><b class="glowtext">WHAT IF MACHINE</b><span>Directorate of Contingencies · WARDEN terminal</span></div>
     <div class="status"><span><i class="dot"></i>Link stable</span><span id="clock">--:--:--</span>
-      <button type="button" class="tbtn" id="profileBtn">Clearance profile</button>
+      <button type="button" class="tbtn profile-tab-hide" id="profileBtn">Clearance profile</button>
+      <button type="button" class="tbtn" id="settingsBtn">Settings</button>
       <button type="button" class="tbtn" id="soundBtn" aria-pressed="true">Sound: on</button></div>
   </header>
   <div class="activebar" id="activebar" hidden role="status"></div>
@@ -1103,6 +1261,50 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
       </div>
     </main>
   </div>
+</div>
+
+<nav class="tabbar" id="tabbar" aria-label="Sections">
+  <button type="button" data-tab="home"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18"/><path d="M3 12h9V3M12 12v9M16 12h5"/></svg>Map</button>
+  <button type="button" data-tab="files"><svg class="ico" viewBox="0 0 24 24"><path d="M3 6h7l2 2h9v11H3z"/></svg>Files</button>
+  <button type="button" data-tab="ask"><svg class="ico" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg>Ask</button>
+  <button type="button" data-tab="ready"><svg class="ico" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>Ready</button>
+  <button type="button" data-tab="profile"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Profile</button>
+</nav>
+
+<div class="guide" id="guide" hidden role="dialog" aria-modal="true" aria-label="Guided procedure"></div>
+
+<div class="overlay" id="settings" hidden>
+  <section class="panel" role="dialog" aria-modal="true" aria-labelledby="sh">
+    <div class="panel-h"><b id="sh">SETTINGS</b><button type="button" class="tbtn" data-close>Close</button></div>
+    <form id="sform">
+      <fieldset class="field"><legend>Look</legend>
+        <div class="opts">
+          <label class="opt-in"><input type="radio" name="theme" id="st-term" value="terminal"><span>Terminal</span></label>
+          <label class="opt-in"><input type="radio" name="theme" id="st-paper" value="paper"><span>Paper file</span></label>
+        </div></fieldset>
+      <fieldset class="field"><legend>Calm mode</legend>
+        <div class="opts">
+          <label class="opt-in"><input type="radio" name="calm" id="sc-auto" value="auto"><span>Auto (sensitive files)</span></label>
+          <label class="opt-in"><input type="radio" name="calm" id="sc-on" value="on"><span>Always on</span></label>
+          <label class="opt-in"><input type="radio" name="calm" id="sc-off" value="off"><span>Off</span></label>
+        </div>
+        <p class="note">Calm mode drops the scanlines, flicker, alarms and typing effects, and uses larger, higher-contrast text.</p></fieldset>
+      <fieldset class="field"><legend>Sound</legend>
+        <label class="range" for="sv-hum"><span>Hum</span><input type="range" id="sv-hum" min="0" max="100" step="5"><output id="so-hum"></output></label>
+        <label class="range" for="sv-fx"><span>Effects</span><input type="range" id="sv-fx" min="0" max="100" step="5"><output id="so-fx"></output></label>
+      </fieldset>
+      <fieldset class="field"><legend>Critical alarm</legend>
+        <div class="opts">
+          <label class="opt-in"><input type="radio" name="alarm" id="sa-std" value="standard"><span>Standard</span></label>
+          <label class="opt-in"><input type="radio" name="alarm" id="sa-soft" value="soft"><span>Soft chime</span></label>
+          <label class="opt-in"><input type="radio" name="alarm" id="sa-off" value="off"><span>Off</span></label>
+        </div></fieldset>
+      <fieldset class="field"><legend>Phone</legend>
+        <div class="opts"><label class="opt-in"><input type="checkbox" id="s-buzz"><span>Vibrate when I tick a step</span></label></div>
+        <p class="note">Vibration works on most Android phones. iPhones don't allow it from web pages.</p></fieldset>
+      <div class="actions"><button type="submit" class="send">Done</button></div>
+    </form>
+  </section>
 </div>
 
 <div class="overlay" id="overlay" hidden>
@@ -1138,6 +1340,7 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
 <script>
 (() => {
   const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const FX = () => !(RM || document.documentElement.classList.contains("calm-on"));
   const byId = Object.fromEntries(SCENARIOS.map(s => [s.id, s]));
   const cats = ["All", ...new Set(SCENARIOS.map(s => s.category))];
   const BUDGET = { tight: "Tight budget", some: "Some savings", comfortable: "Comfortable budget" };
@@ -1150,6 +1353,12 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     set(k, v) { try { localStorage.setItem("wim:" + k, JSON.stringify(v)); } catch {} },
     del(k) { try { localStorage.removeItem("wim:" + k); } catch {} }
   };
+  const SET = Object.assign({ theme: "terminal", calm: "auto", hum: 50, fx: 70, alarm: "standard", buzz: true }, (() => { try { return JSON.parse(localStorage.getItem("wim:settings")) || {}; } catch { return {}; } })());
+  const saveSet = () => { try { localStorage.setItem("wim:settings", JSON.stringify(SET)); } catch {} };
+  document.documentElement.dataset.themeUi = SET.theme;
+  const applyCalm = s => document.documentElement.classList.toggle("calm-on", SET.calm === "on" || (SET.calm === "auto" && !!(s && s.calm)));
+  applyCalm(null);
+  const buzz = () => { if (SET.buzz && navigator.vibrate) try { navigator.vibrate(18); } catch {} };
   const ss = { get(k) { try { return sessionStorage.getItem(k); } catch { return null; } }, set(k, v) { try { sessionStorage.setItem(k, v); } catch {} } };
 
   // ---------- profile ----------
@@ -1200,7 +1409,10 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     init() {
       if (this.ctx) { if (this.ctx.state === "suspended") this.ctx.resume(); return; }
       try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return; }
-      this.out = this.ctx.createGain(); this.out.gain.value = .6; this.out.connect(this.ctx.destination);
+      this.master = this.ctx.createGain(); this.master.gain.value = .6; this.master.connect(this.ctx.destination);
+      this.out = this.ctx.createGain(); this.out.connect(this.master);
+      this.humBus = this.ctx.createGain(); this.humBus.connect(this.master);
+      this.levels();
       const len = this.ctx.sampleRate * .05, buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate), d = buf.getChannelData(0);
       for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 6);
       this.noise = buf;
@@ -1213,7 +1425,7 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
       f.type = "lowpass"; f.frequency.value = 160;
       lfo.frequency.value = .2; lg.gain.value = .004; lfo.connect(lg); lg.connect(g.gain);
       g.gain.value = 0; g.gain.linearRampToValueAtTime(.018, c.currentTime + 1.5);
-      o1.connect(f); o2.connect(f); f.connect(g); g.connect(this.out);
+      o1.connect(f); o2.connect(f); f.connect(g); g.connect(this.humBus);
       [o1, o2, lfo].forEach(o => o.start());
       this.hum = { g, nodes: [o1, o2, lfo] };
     },
@@ -1238,7 +1450,13 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
       g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
       o.connect(g); g.connect(this.out); o.start(t); o.stop(t + dur + .02);
     },
-    alarm() { for (let i = 0; i < 4; i++) { this.tone(880, .2, { at: i * .5, vol: .045 }); this.tone(620, .22, { at: i * .5 + .24, vol: .045 }); } },
+    levels() { if (!this.ctx) return; this.out.gain.value = SET.fx / 70; this.humBus.gain.value = SET.hum / 50; },
+    alarm() {
+      if (SET.alarm === "off" || !FX()) return;
+      if (SET.alarm === "soft") { [0, .6].forEach(at => { this.tone(660, .6, { type: "sine", vol: .05, at }); this.tone(990, .7, { type: "sine", vol: .03, at: at + .12 }); }); return; }
+      for (let i = 0; i < 4; i++) { this.tone(880, .2, { at: i * .5, vol: .045 }); this.tone(620, .22, { at: i * .5 + .24, vol: .045 }); }
+    },
+    thump(at = 0) { if (FX()) { this.tone(90, .18, { type: "sine", vol: .22, at, slide: 40 }); this.tone(180, .05, { type: "square", vol: .03, at }); } },
     chirp() { this.tone(660, .09, { type: "sine", vol: .08, slide: 1320 }); },
     open() { this.tone(240, .12, { type: "triangle", vol: .07, slide: 480 }); },
     boot() { this.tone(110, .5, { type: "sine", vol: .1, slide: 440 }); this.tone(880, .15, { type: "sine", vol: .05, at: .45 }); },
@@ -1271,7 +1489,7 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     const line = log("", cls, "WARDEN");
     const span = document.createElement("span");
     line.appendChild(span);
-    if (RM) { span.textContent = text; return; }
+    if (!FX()) { span.textContent = text; return; }
     for (let i = 0; i < text.length; i += 2) { span.textContent = text.slice(0, i + 2); Sound.key(); $("log").scrollTop = $("log").scrollHeight; await sleep(12); }
   }
 
@@ -1284,13 +1502,13 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     renderIndex();
   });
   function renderIndex() {
-    const cur = currentId();
+    const cur = byId[location.hash.slice(1)] ? location.hash.slice(1) : null;
     $("readyPct").textContent = readiness().pct + "%";
     if (location.hash === "#readiness") $("readyLink").setAttribute("aria-current", "page"); else $("readyLink").removeAttribute("aria-current");
     const list = SCENARIOS.filter(s => cat === "All" || s.category === cat);
     $("files").innerHTML = list.map(s => `
-      <li><a href="#${s.id}" class="L-${s.level}" ${s.id === cur && location.hash !== "#readiness" ? 'aria-current="page"' : ""} title="${s.level}">
-        <span class="f-code">${esc(s.code)}</span><span class="f-title">${esc(s.title)}</span><i class="pip" aria-label="${s.level}"></i>
+      <li><a href="#${s.id}" class="L-${s.level}" ${s.id === cur ? 'aria-current="page"' : ""} title="${s.level}">
+        ${icon(s.icon)}<span class="f-code">${esc(s.code)}</span><span class="f-title">${esc(s.title)}</span><i class="pip" aria-label="${s.level}"></i>
       </a></li>`).join("");
   }
 
@@ -1356,7 +1574,7 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
       <ul class="prep">${s.prep.map((x, i) => `<li><label class="${done.includes(x) ? "on" : ""}"><input type="checkbox" data-prep="${esc(x)}" id="pr-${s.id}-${i}" ${done.includes(x) ? "checked" : ""}><span class="box" aria-hidden="true"></span><span>${fill(x)}</span></label></li>`).join("")}</ul>`;
   }
   function renderReadiness(animate) {
-    current = null; usedKeys = new Set();
+    current = null; usedKeys = new Set(); applyCalm(null);
     const r = readiness();
     const el = $("dossier");
     el.className = "dossier L-ROUTINE";
@@ -1369,7 +1587,7 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
       <div class="bigpct">${r.pct}%</div>
       <p class="assess">${r.done} of ${r.total} preparation tasks complete. Open any file to tick off its "Prepare in advance" list. Lowest scores are listed first.</p>
       <div class="rtable">${rows}</div>`;
-    if (animate && !RM) $("dt").classList.add("glitch");
+    if (animate && FX()) $("dt").classList.add("glitch");
   }
 
   // ---------- active incident ----------
@@ -1415,10 +1633,202 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     const ol = box.querySelector("ol"); ol.scrollTop = ol.scrollHeight;
   }
 
+  // ---------- line drawings ----------
+  const ICONS = {
+    briefcase: '<rect x="3" y="7" width="18" height="13" rx="1"/><path d="M9 7V4h6v3M3 12h18M11 12v2h2v-2"/>',
+    wifi: '<path d="M2 9a15 15 0 0 1 20 0M5.5 12.5a10 10 0 0 1 13 0M9 16a5 5 0 0 1 6 0"/><circle cx="12" cy="19" r=".8"/><path d="M3 3l18 18"/>',
+    bolt: '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+    wallet: '<path d="M3 7h16a2 2 0 0 1 2 2v10H3z"/><path d="M3 7l12-4 1 4"/><rect x="15" y="11" width="6" height="4"/><circle cx="17.5" cy="13" r=".6"/>',
+    phone: '<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M10 5h4M11 19h2"/>',
+    key: '<circle cx="7.5" cy="12" r="4.5"/><path d="M12 12h10M18 12v3M21 12v2"/><circle cx="7.5" cy="12" r="1.2"/>',
+    car: '<path d="M3 16v-4l2-5h14l2 5v4z"/><path d="M5 12h14"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M11 3l1-1 1 1M12 2v3"/>',
+    drop: '<path d="M3 5h9v3H3zM12 6h6v4"/><path d="M18 13c-1.5 2-2.5 3.3-2.5 4.5a2.5 2.5 0 0 0 5 0c0-1.2-1-2.5-2.5-4.5z"/><path d="M6 8v2M9 8v2"/>',
+    lock: '<rect x="4" y="11" width="16" height="10" rx="1"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/><path d="M12 15v2"/>',
+    plane: '<path d="M2 13l8-1 5-8h2l-2 8 5 .5 2-2.5h1l-1 4 1 4h-1l-2-2.5-5 .5 2 8h-2l-5-8-8-1z"/>',
+    laptop: '<rect x="5" y="4" width="14" height="10"/><path d="M2 18h20l-2-4H4z"/><path d="M9 9l2 2M11 9l-2 2M13 9l2 2M15 9l-2 2"/>',
+    receipt: '<path d="M6 2h12v20l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5-2 1.5z"/><path d="M9 7h6M9 11h6M9 15h3"/>',
+    pulse: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M5 13h3l2-5 3 9 2-6 1 2h3"/>',
+    heart: '<path d="M12 20s-8-5-8-11a4 4 0 0 1 8-1 4 4 0 0 1 8 1c0 6-8 11-8 11z"/><path d="M12 8l-2 4 3 2-2 4"/>',
+    candle: '<rect x="8" y="10" width="8" height="11"/><path d="M12 10V7"/><path d="M12 2c1.5 2 2 3 0 5-2-2-1.5-3 0-5z"/><path d="M5 21h14"/>',
+    coins: '<ellipse cx="9" cy="6" rx="6" ry="2.5"/><path d="M3 6v4c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5V6M3 10v4c0 1.4 2.7 2.5 6 2.5"/><path d="M19 11v9M16 17l3 3 3-3"/>',
+    house: '<path d="M3 11l9-8 9 8"/><path d="M5 9.5V21h14V9.5"/><rect x="10" y="14" width="4" height="7"/><path d="M15 4h3v4"/>',
+    cloud: '<path d="M7 15a4 4 0 0 1 .5-8 5.5 5.5 0 0 1 10.5 1.5A3.5 3.5 0 0 1 17.5 15z"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3"/>',
+    crash: '<path d="M2 17v-3l2-4h7l2 4v3z"/><circle cx="5" cy="18" r="1.5"/><circle cx="10" cy="18" r="1.5"/><path d="M17 4l1 3 3-1-2 3 3 2-3 .5 1 3-3-2-1 3"/>',
+    hook: '<path d="M12 2v11a4 4 0 1 1-8 0v-1l2 2"/><circle cx="12" cy="2.5" r=".8"/><path d="M17 8l3-3M17 12h4M17 16l3 3"/>',
+    talk: '<path d="M3 4h18v12h-9l-5 4v-4H3z"/><path d="M12 13s-3.5-2-3.5-4.2A1.8 1.8 0 0 1 12 8a1.8 1.8 0 0 1 3.5.8C15.5 11 12 13 12 13z"/>',
+    paw: '<ellipse cx="12" cy="16" rx="4.5" ry="3.8"/><circle cx="6" cy="10" r="1.8"/><circle cx="9.5" cy="6" r="1.8"/><circle cx="14.5" cy="6" r="1.8"/><circle cx="18" cy="10" r="1.8"/>'
+  };
+  const icon = (name, cls = "ico") => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name] || ICONS.receipt}</svg>`;
+
+  // ---------- facility map (home) ----------
+  const AREA = { "Work & money": "a-work", Home: "a-home door-r", Tech: "a-tech door-r", Travel: "a-travel", Health: "a-health door-r", Life: "a-life" };
+  const RANK = { ROUTINE: 0, DISRUPTIVE: 1, CRITICAL: 2 };
+  function renderHome(animate) {
+    current = null; usedKeys = new Set(); applyCalm(null);
+    const r = readiness();
+    const sectors = cats.filter(c => c !== "All").map((c, i) => {
+      const list = SCENARIOS.filter(s => s.category === c);
+      const top = list.reduce((m, s) => RANK[s.level] > RANK[m] ? s.level : m, "ROUTINE");
+      const per = r.per.filter(x => x.s.category === c);
+      const t = per.reduce((n, x) => n + x.t, 0), d = per.reduce((n, x) => n + x.d, 0), pct = t ? Math.round(d / t * 100) : 0;
+      return `<section class="sector ${AREA[c] || ""} L-${top} hot" style="${AREA[c] ? "" : "grid-column: span 3"}">
+        <div class="sec-h"><b>${esc(c)}</b><span>Sector ${String.fromCharCode(65 + i)} · ${list.length} files</span></div>
+        <div class="sec-ready">Ready ${pct}% <span class="bar"><i style="width:${pct}%"></i></span></div>
+        <div class="sec-files">${list.map(s => `<a href="#${s.id}" class="L-${s.level}">${icon(s.icon)}${esc(s.title)}<i class="pip"></i></a>`).join("")}</div>
+      </section>`;
+    }).join("");
+    const el = $("dossier");
+    el.className = "dossier L-ROUTINE";
+    el.innerHTML = `
+      <div class="d-top"><span>Site 7 · contingency floor plan</span><span>${esc(placeName())}</span></div>
+      <h1 class="d-title" id="dt">Facility map</h1>
+      <p class="assess">Every sector holds the incident files for one part of life. Sector walls glow with the highest threat level inside. Tap a file to open it, or describe what happened to WARDEN.</p>
+      <div class="home-cta"><button type="button" class="guide-btn" data-tab-go="ask">Ask WARDEN</button><a class="tbtn" href="#readiness" style="text-decoration:none">Readiness ${r.pct}%</a></div>
+      <div class="map-wrap"><div class="map" style="position:relative">${sectors}</div></div>
+      <div class="map-legend"><span class="L-ROUTINE"><i class="pip"></i> Routine</span><span class="L-DISRUPTIVE"><i class="pip"></i> Disruptive</span><span class="L-CRITICAL"><i class="pip"></i> Critical</span><span>Gaps in walls are doorways. Hatched floor is unassigned.</span></div>`;
+    if (animate && FX()) { el.classList.add("opening"); setTimeout(() => el.classList.remove("opening"), 900); $("dt").classList.add("glitch"); }
+  }
+
+  // ---------- guide mode ----------
+  let G = null, gReturn = null;
+  function gBuild(nodes, prefix, out) {
+    for (let i = 0; i < nodes.length; i++) {
+      const n = nodes[i], no = prefix ? `${prefix}.${i + 1}` : `${i + 1}`;
+      if (n.t === "step") { out.push({ k: "step", n, no }); continue; }
+      out.push({ k: "dec", n, no });
+      const c = G.choices[no];
+      if (c == null) return false;
+      if (!gBuild(n.branches[c].flow, no + String.fromCharCode(65 + c), out)) return false;
+    }
+    return true;
+  }
+  function gSeq() { const out = []; if (gBuild(G.flow, "", out)) out.push({ k: "end" }); return out; }
+  function openGuide() {
+    if (!current) return;
+    gReturn = document.activeElement;
+    G = { s: current.s, flow: current.flowData, choices: {}, idx: 0, dir: 1 };
+    $("guide").hidden = false; document.body.style.overflow = "hidden";
+    renderGuide(); Sound.open();
+    const A = getActive(); if (A && A.id === G.s.id && !A.ended) addEvent("Guided mode started");
+  }
+  function closeGuide() {
+    $("guide").hidden = true; document.body.style.overflow = "";
+    const s = G && G.s; G = null;
+    if (s && current && current.s.id === s.id) renderDossier(s, false);
+    gReturn?.focus?.();
+  }
+  function markDone(item, done) {
+    const s = G.s, key = item.n.title;
+    const list = store.get(s.id, []).filter(x => x !== key);
+    if (done) list.push(key);
+    store.set(s.id, list);
+    const A = getActive();
+    if (A && A.id === s.id && !A.ended) addEvent(`${done ? "Done" : "Reopened"}: ${plain(key)}`);
+  }
+  function renderGuide() {
+    const seq = gSeq(), item = seq[G.idx], s = G.s, done = store.get(s.id, []);
+    const stepsDone = seq.filter(x => x.k === "step" && done.includes(x.n.title)).length, stepsTotal = seq.filter(x => x.k === "step").length;
+    let body = "", actions = "";
+    if (item.k === "step") {
+      const isDone = done.includes(item.n.title);
+      body = `<div class="g-meta"><span>Procedure ${item.no}</span>${item.n.critical ? '<span class="crit">Priority</span>' : ""}${item.n.time ? `<span>${esc(item.n.time)}</span>` : ""}</div>
+        <h2 class="g-title">${fill(item.n.title)}</h2><p class="g-text">${fill(item.n.text)}</p>${isDone ? '<span class="g-done-tag">EXECUTED</span>' : ""}`;
+      actions = `<button type="button" id="gBack" ${G.idx ? "" : "disabled"}>Back</button>
+        ${isDone ? '<button type="button" class="g-next" id="gNext">Next</button>' : '<button type="button" id="gSkip">Skip</button><button type="button" class="g-next" id="gDone">Done</button>'}`;
+    } else if (item.k === "dec") {
+      const c = G.choices[item.no];
+      body = `<div class="g-meta"><span>Checkpoint ${item.no}</span></div><h2 class="g-title g-q">${fill(item.n.q)}</h2>
+        <div class="g-branches">${item.n.branches.map((b, i) => `<button type="button" data-branch="${i}" class="${c === i ? "sel" : ""}">${String.fromCharCode(65 + i)} · ${esc(b.label)}</button>`).join("")}</div>`;
+      actions = `<button type="button" id="gBack" ${G.idx ? "" : "disabled"}>Back</button>${c != null ? '<button type="button" class="g-next" id="gNext">Next</button>' : ""}`;
+    } else {
+      body = `<div class="g-meta"><span>${esc(s.code)} · end of procedure</span></div><h2 class="g-title">${stepsDone} of ${stepsTotal} steps done</h2>
+        <p class="g-text">${esc(s.end)}</p>`;
+      actions = `<button type="button" id="gBack">Back</button><button type="button" class="g-next" id="gClose2">Close guide</button>`;
+    }
+    const em = C().emergency, short = em.length <= 12;
+    $("guide").innerHTML = `
+      <div class="g-top"><span class="sp">${esc(s.code)} · ${esc(s.title)}</span><span>${stepsDone} done</span><button type="button" class="tbtn" id="gClose">Close</button></div>
+      <div class="g-dots" aria-hidden="true">${seq.map((x, i) => `<i class="${i === G.idx ? "c" : x.k === "step" && done.includes(x.n.title) ? "d" : ""}"></i>`).join("")}</div>
+      <div class="g-body" id="gBody"><div class="g-card ${G.dir < 0 ? "back" : ""}">${body}</div></div>
+      <div class="g-hint">Swipe or use the arrow keys to move between steps</div>
+      <div class="g-actions">${actions}</div>
+      <div class="g-sos"><span>${short ? "If anyone is in danger, call" : "If anyone is in danger, call " + esc(em)}</span>${short ? `<b>${esc(em)}</b>` : ""}${short ? `<button type="button" data-copy-sos="${esc(em)}">Copy</button>` : ""}</div>`;
+    const focusEl = $("guide").querySelector("#gDone, #gNext, .g-branches button, #gClose2");
+    focusEl?.focus({ preventScroll: true });
+  }
+  function gMove(dir) {
+    const seq = gSeq();
+    const ni = G.idx + dir;
+    if (ni < 0 || ni >= seq.length) return;
+    if (dir > 0 && seq[G.idx].k === "dec" && G.choices[seq[G.idx].no] == null) return;
+    G.idx = ni; G.dir = dir; Sound.key(); renderGuide();
+  }
+  $("guide").addEventListener("click", async e => {
+    if (!G) return;
+    const t = e.target.closest("button"); if (!t) return;
+    const item = gSeq()[G.idx];
+    if (t.id === "gClose" || t.id === "gClose2") return closeGuide();
+    if (t.id === "gBack") return gMove(-1);
+    if (t.id === "gNext" || t.id === "gSkip") return gMove(1);
+    if (t.id === "gDone") { markDone(item, true); Sound.chirp(); buzz(); return gMove(1); }
+    if (t.dataset.branch != null) { G.choices[item.no] = +t.dataset.branch; Sound.chirp(); buzz(); return gMove(1); }
+    if (t.dataset.copySos) { try { await navigator.clipboard.writeText(t.dataset.copySos); t.textContent = "Copied"; } catch { const r = document.createRange(); r.selectNodeContents(t.previousElementSibling); getSelection().removeAllRanges(); getSelection().addRange(r); t.textContent = "Selected"; } }
+  });
+  let tx = null, ty = null;
+  $("guide").addEventListener("touchstart", e => { const p = e.changedTouches[0]; tx = p.clientX; ty = p.clientY; }, { passive: true });
+  $("guide").addEventListener("touchend", e => {
+    if (tx == null || !G) return;
+    const p = e.changedTouches[0], dx = p.clientX - tx, dy = p.clientY - ty; tx = null;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) gMove(dx < 0 ? 1 : -1);
+  }, { passive: true });
+
+  // ---------- views + tab bar (phones) ----------
+  function setView(v) { document.body.dataset.view = v; markTabs(); }
+  function markTabs() {
+    const v = document.body.dataset.view || "main", h = location.hash;
+    const tab = v === "files" ? "files" : v === "ask" ? "ask" : h === "#readiness" ? "ready" : byId[h.slice(1)] ? "" : "home";
+    document.querySelectorAll("#tabbar button").forEach(b => b.setAttribute("aria-current", b.dataset.tab === tab));
+  }
+  function goTab(t) {
+    if (t === "profile") return openProfile();
+    if (t === "files") { setView("files"); scrollTo(0, 0); return; }
+    if (t === "ask") { setView("ask"); scrollTo(0, 0); setTimeout(() => $("q").focus(), 50); return; }
+    setView("main");
+    const h = t === "ready" ? "#readiness" : "#home";
+    if (location.hash !== h) location.hash = h; else { route(true); scrollTo(0, 0); }
+  }
+  $("tabbar").addEventListener("click", e => { const b = e.target.closest("[data-tab]"); if (b) goTab(b.dataset.tab); });
+
+  // ---------- settings ----------
+  function openSettings() {
+    lastFocus = document.activeElement;
+    $("st-" + (SET.theme === "paper" ? "paper" : "term")).checked = true;
+    $("sc-" + SET.calm).checked = true;
+    $("sa-" + (SET.alarm === "standard" ? "std" : SET.alarm)).checked = true;
+    $("sv-hum").value = SET.hum; $("so-hum").textContent = SET.hum;
+    $("sv-fx").value = SET.fx; $("so-fx").textContent = SET.fx;
+    $("s-buzz").checked = SET.buzz;
+    $("settings").hidden = false; $("sform").querySelector("input:checked").focus();
+  }
+  function closeSettings() { $("settings").hidden = true; lastFocus?.focus?.(); }
+  $("settingsBtn").addEventListener("click", openSettings);
+  $("settings").addEventListener("click", e => { if (e.target === $("settings") || e.target.closest("[data-close]")) closeSettings(); });
+  $("sform").addEventListener("input", e => {
+    const t = e.target;
+    if (t.name === "theme") { SET.theme = t.value; document.documentElement.dataset.themeUi = SET.theme; }
+    if (t.name === "calm") { SET.calm = t.value; applyCalm(current && current.s); }
+    if (t.name === "alarm") { SET.alarm = t.value; Sound.init(); Sound.alarm(); }
+    if (t.id === "sv-hum") { SET.hum = +t.value; $("so-hum").textContent = t.value; Sound.levels(); }
+    if (t.id === "sv-fx") { SET.fx = +t.value; $("so-fx").textContent = t.value; Sound.levels(); Sound.chirp(); }
+    if (t.id === "s-buzz") { SET.buzz = t.checked; buzz(); }
+    saveSet();
+  });
+  $("sform").addEventListener("submit", e => { e.preventDefault(); closeSettings(); log("Settings saved.", "sys", "WARDEN"); });
+
   // ---------- dossier ----------
   let current = null;
   function renderDossier(s, animate) {
-    d = 0; usedKeys = new Set();
+    d = 0; usedKeys = new Set(); applyCalm(s);
     const flowData = tailor(s.flow);
     current = { s, flowData, total: countSteps(flowData) };
     const done = store.get(s.id, []);
@@ -1436,8 +1846,8 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     el.innerHTML = `
       ${crit ? `<div class="alertbar">Critical incident · ${s.quiet ? "you don't have to do this alone" : "emergency services first"}</div>` : ""}
       <div class="d-top"><span>File ${esc(s.code)} · ${esc(s.category)}</span><span>Contingency protocol · eyes only</span></div>
-      <h1 class="d-title" id="dt">${esc(s.title)}</h1>
-      <span class="stamp">Class: ${s.level}</span>
+      <div class="d-head"><span class="ico-frame">${icon(s.icon)}<small>FIG. ${esc(s.code.slice(-3))}</small></span>
+        <div><h1 class="d-title" id="dt">${esc(s.title)}</h1><span class="stamp">Class: ${s.level}</span></div></div>
       ${card}
       <dl class="meta">
         <div><dt>Item</dt><dd>${esc(s.code)}</dd></div>
@@ -1450,6 +1860,8 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
       <h2 class="sec">WARDEN assessment</h2>
       <p class="assess" id="assess"></p>
       <h2 class="sec">Containment procedures</h2>
+      <div class="progress"><button type="button" class="guide-btn" id="guideBtn">Guide me step by step</button>
+        ${document.documentElement.classList.contains("calm-on") ? '<span class="calmflag">Calm mode on</span>' : ""}</div>
       ${incHtml(s)}
       <div class="progress"><span id="pc"></span><div class="bar"><i id="pb"></i></div><button type="button" class="reset" id="reset">Reset</button></div>
       <div class="chart"><div class="flow">${flow}</div></div>
@@ -1458,12 +1870,14 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
         ${uniq.length ? `<ul>${uniq.join("")}</ul>` : ""}</div>
       <p class="disclaimer">General guidance only, not legal, financial, or medical advice. Rules differ by country and provider. If anyone is in danger, call ${esc(C().emergency)} first.</p>`;
     renderIncLog();
-    if (!animate || RM) el.querySelectorAll(".rv").forEach(x => x.classList.remove("rv"));
+    if (!animate || !FX()) el.querySelectorAll(".rv").forEach(x => x.classList.remove("rv"));
     else {
       if (!s.quiet) $("dt").classList.add("glitch");
+      el.classList.add("opening"); setTimeout(() => el.classList.remove("opening"), 1100);
+      Sound.thump(.45);
       if (crit && !s.quiet) { el.classList.add("alarm"); Sound.alarm(); } else Sound.open();
     }
-    typeAssessment(s, animate && !RM);
+    typeAssessment(s, animate && FX());
     updateProgress();
   }
 
@@ -1507,8 +1921,15 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
 
   function decrypt(b) {
     if (b.classList.contains("shown")) return;
-    const real = b.dataset.text, glyphs = "█▓▒░#%&@$*+=<>/\\";
-    if (RM) { b.classList.add("shown"); b.setAttribute("aria-label", real); return; }
+    const real = b.dataset.text;
+    if (!FX()) { b.classList.add("shown"); b.setAttribute("aria-label", real); return; }
+    if (b.classList.contains("peel") || b.classList.contains("scramble")) return;
+    b.classList.add("peel"); Sound.tone(1400, .35, { type: "sawtooth", vol: .015, slide: 300 });
+    setTimeout(() => { b.classList.remove("peel"); scramble(b, real); }, 420);
+    log(`Declassification logged for "${esc(real)}". Clearance check skipped.`, "warn", "WARDEN");
+  }
+  function scramble(b, real) {
+    const glyphs = "█▓▒░#%&@$*+=<>/\\";
     b.classList.add("scramble");
     let f = 0;
     const iv = setInterval(() => {
@@ -1517,7 +1938,6 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
       b.textContent = real.split("").map((ch, i) => i < keep || ch === " " ? ch : glyphs[Math.floor(Math.random() * glyphs.length)]).join("");
       if (f >= 14) { clearInterval(iv); b.textContent = real; b.classList.remove("scramble"); b.classList.add("shown"); b.setAttribute("aria-label", real); }
     }, 40);
-    log(`Declassification logged for "${esc(real)}". Clearance check skipped.`, "warn", "WARDEN");
   }
 
   $("dossier").addEventListener("change", e => {
@@ -1525,7 +1945,7 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     if (e.target.dataset.prep !== undefined) {
       const s = current.s, key = e.target.dataset.prep;
       const done = prepDone(s.id).filter(x => x !== key);
-      if (e.target.checked) { done.push(key); Sound.chirp(); }
+      if (e.target.checked) { done.push(key); Sound.chirp(); buzz(); }
       store.set("prep:" + s.id, done);
       e.target.closest("label").classList.toggle("on", e.target.checked);
       const n = s.prep.filter(x => done.includes(x)).length;
@@ -1543,7 +1963,7 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
     const A = getActive();
     if (A && A.id === s.id && !A.ended) addEvent(`${e.target.checked ? "Done" : "Reopened"}: ${plain(key)}`);
     if (!e.target.checked) { log(`Procedure ${no} reopened.`, "sys", "WARDEN"); return; }
-    Sound.chirp();
+    Sound.chirp(); buzz();
     if (n === total) { say(`All ${total} procedures executed. ${s.code} reclassified as CONTAINED. Good work.`); Sound.tone(523, .15, { type: "sine", vol: .07, at: .15 }); Sound.tone(784, .3, { type: "sine", vol: .07, at: .3 }); }
     else say(`Procedure ${no} logged: ${plain(key)}. ${total - n} remaining.`);
   });
@@ -1556,6 +1976,8 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
       catch { const sel = getSelection(), rg = document.createRange(); rg.selectNodeContents(cp.previousElementSibling); sel.removeAllRanges(); sel.addRange(rg); cp.textContent = "Selected"; }
       setTimeout(() => { cp.textContent = "Copy"; }, 1500);
     }
+    if (e.target.id === "guideBtn") return openGuide();
+    const tg = e.target.closest("[data-tab-go]"); if (tg) return goTab(tg.dataset.tabGo);
     if (e.target.id === "activate") {
       const s = current.s, prev = getActive();
       store.set("active", { id: s.id, start: Date.now(), events: [{ t: Date.now(), text: `Incident opened: ${s.title}` }] });
@@ -1610,7 +2032,17 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
   $("log").addEventListener("click", e => { if (e.target.closest("[data-profile]")) openProfile(); });
   $("closeP").addEventListener("click", closeProfile);
   $("overlay").addEventListener("click", e => { if (e.target === $("overlay")) closeProfile(); });
-  addEventListener("keydown", e => { if (e.key === "Escape" && !$("overlay").hidden) closeProfile(); });
+  addEventListener("keydown", e => {
+    if (G && !$("guide").hidden) {
+      if (e.key === "Escape") closeGuide();
+      else if (e.key === "ArrowRight") gMove(1);
+      else if (e.key === "ArrowLeft") gMove(-1);
+      return;
+    }
+    if (e.key !== "Escape") return;
+    if (!$("overlay").hidden) closeProfile();
+    if (!$("settings").hidden) closeSettings();
+  });
   $("pform").addEventListener("submit", e => {
     e.preventDefault();
     P = {
@@ -1665,18 +2097,25 @@ a.tpl { color: var(--amber); text-decoration: underline dotted; text-underline-o
   $("log").addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b) go(b.dataset.go); });
 
   // ---------- routing ----------
-  function currentId() { const h = location.hash.slice(1); return byId[h] ? h : SCENARIOS[0].id; }
+  function currentId() { const h = location.hash.slice(1); return byId[h] ? h : null; }
+  setView("main");
   function go(id) { if (location.hash.slice(1) === id) route(true); else location.hash = id; }
   function route(animate) {
-    if (location.hash === "#readiness") renderReadiness(animate); else renderDossier(byId[currentId()], animate);
-    renderIndex();
+    const id = currentId();
+    if (location.hash === "#readiness") renderReadiness(animate);
+    else if (id) renderDossier(byId[id], animate);
+    else renderHome(animate);
+    renderIndex(); markTabs();
   }
   window.addEventListener("hashchange", () => {
     route(true);
+    setView("main");
     const s = byId[currentId()];
     if (location.hash === "#readiness") log(`Readiness audit compiled: ${readiness().pct}% prepared.`, "sys", "WARDEN");
-    else log(`File ${s.code} retrieved. Class ${s.level}.`, "sys", "WARDEN");
-    if (innerWidth <= 860) $("dossier").scrollIntoView({ block: "start", behavior: RM ? "auto" : "smooth" });
+    else if (s) log(`File ${s.code} retrieved. Class ${s.level}.`, "sys", "WARDEN");
+    else log("Facility map loaded.", "sys", "WARDEN");
+    if (innerWidth <= 720) scrollTo(0, 0);
+    else if (innerWidth <= 860) $("dossier").scrollIntoView({ block: "start", behavior: RM ? "auto" : "smooth" });
   });
 
   // ---------- boot ----------
