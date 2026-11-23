@@ -1,14 +1,7 @@
 {
  "source": "Met Office weather warnings (Crown copyright)",
  "regions": {
-  "uk": [
-   {
-    "title": "Yellow warning of rain affecting South West England",
-    "description": "Yellow warning of rain affecting South West England: Cornwall, Devon, Plymouth, Torbay valid from 0600 Sun 22 Nov to 2359 Sun 22 Nov",
-    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-22&id=ee79f19a-c3d0-4b76-963a-dd166d264efe&referrer=rss",
-    "published": ""
-   }
-  ],
+  "uk": [],
   "os": [],
   "he": [],
   "gr": [],
@@ -23,14 +16,7 @@
   "wm": [],
   "em": [],
   "ee": [],
-  "sw": [
-   {
-    "title": "Yellow warning of rain affecting South West England",
-    "description": "Yellow warning of rain affecting South West England: Cornwall, Devon, Plymouth, Torbay valid from 0600 Sun 22 Nov to 2359 Sun 22 Nov",
-    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-22&id=ee79f19a-c3d0-4b76-963a-dd166d264efe&referrer=rss",
-    "published": ""
-   }
-  ],
+  "sw": [],
   "se": []
  }
 }
