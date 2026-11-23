@@ -1,22 +1,101 @@
 {
  "source": "Met Office weather warnings (Crown copyright)",
  "regions": {
-  "uk": [],
+  "uk": [
+   {
+    "title": "Yellow warning of rain affecting South West England",
+    "description": "Yellow warning of rain affecting South West England: Cornwall, Isles of Scilly valid from 1000 Tue 24 Nov to 2359 Tue 24 Nov",
+    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-24&id=21bee47b-ec7d-4891-8d13-44c3b634a490&referrer=rss",
+    "published": ""
+   },
+   {
+    "title": "Yellow warning of ice affecting Dumfries, Galloway, Lothian & Borders",
+    "description": "Yellow warning of ice affecting Dumfries, Galloway, Lothian & Borders: East Lothian, Edinburgh, Midlothian Council, Scottish Borders, West Lothian valid from 0300 Tue 24 Nov to 0900 Tue 24 Nov",
+    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-24&id=9c35ede2-c34e-4fae-8feb-fc79e7aa7b5a&referrer=rss",
+    "published": ""
+   },
+   {
+    "title": "Yellow warning of ice affecting Grampian",
+    "description": "Yellow warning of ice affecting Grampian: Aberdeen, Aberdeenshire, Moray valid from 0300 Tue 24 Nov to 0900 Tue 24 Nov",
+    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-24&id=9c35ede2-c34e-4fae-8feb-fc79e7aa7b5a&referrer=rss",
+    "published": ""
+   },
+   {
+    "title": "Yellow warning of ice affecting Highlands & Eilean Siar",
+    "description": "Yellow warning of ice affecting Highlands & Eilean Siar: Highland valid from 0300 Tue 24 Nov to 0900 Tue 24 Nov",
+    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-24&id=9c35ede2-c34e-4fae-8feb-fc79e7aa7b5a&referrer=rss",
+    "published": ""
+   },
+   {
+    "title": "Yellow warning of ice affecting North East England",
+    "description": "Yellow warning of ice affecting North East England: Northumberland valid from 0300 Tue 24 Nov to 0900 Tue 24 Nov",
+    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-24&id=9c35ede2-c34e-4fae-8feb-fc79e7aa7b5a&referrer=rss",
+    "published": ""
+   },
+   {
+    "title": "Yellow warning of ice affecting Central, Tayside & Fife",
+    "description": "Yellow warning of ice affecting Central, Tayside & Fife: Angus, Clackmannanshire, Dundee, Falkirk, Fife, Perth and Kinross valid from 0300 Tue 24 Nov to 0900 Tue 24 Nov",
+    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-24&id=9c35ede2-c34e-4fae-8feb-fc79e7aa7b5a&referrer=rss",
+    "published": ""
+   }
+  ],
   "os": [],
-  "he": [],
-  "gr": [],
+  "he": [
+   {
+    "title": "Yellow warning of ice affecting Highlands & Eilean Siar",
+    "description": "Yellow warning of ice affecting Highlands & Eilean Siar: Highland valid from 0300 Tue 24 Nov to 0900 Tue 24 Nov",
+    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-24&id=9c35ede2-c34e-4fae-8feb-fc79e7aa7b5a&referrer=rss",
+    "published": ""
+   }
+  ],
+  "gr": [
+   {
+    "title": "Yellow warning of ice affecting Grampian",
+    "description": "Yellow warning of ice affecting Grampian: Aberdeen, Aberdeenshire, Moray valid from 0300 Tue 24 Nov to 0900 Tue 24 Nov",
+    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-24&id=9c35ede2-c34e-4fae-8feb-fc79e7aa7b5a&referrer=rss",
+    "published": ""
+   }
+  ],
   "st": [],
-  "ta": [],
-  "dg": [],
+  "ta": [
+   {
+    "title": "Yellow warning of ice affecting Central, Tayside & Fife",
+    "description": "Yellow warning of ice affecting Central, Tayside & Fife: Angus, Clackmannanshire, Dundee, Falkirk, Fife, Perth and Kinross valid from 0300 Tue 24 Nov to 0900 Tue 24 Nov",
+    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-24&id=9c35ede2-c34e-4fae-8feb-fc79e7aa7b5a&referrer=rss",
+    "published": ""
+   }
+  ],
+  "dg": [
+   {
+    "title": "Yellow warning of ice affecting Dumfries, Galloway, Lothian & Borders",
+    "description": "Yellow warning of ice affecting Dumfries, Galloway, Lothian & Borders: East Lothian, Edinburgh, Midlothian Council, Scottish Borders, West Lothian valid from 0300 Tue 24 Nov to 0900 Tue 24 Nov",
+    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-24&id=9c35ede2-c34e-4fae-8feb-fc79e7aa7b5a&referrer=rss",
+    "published": ""
+   }
+  ],
   "ni": [],
   "wl": [],
   "nw": [],
-  "ne": [],
+  "ne": [
+   {
+    "title": "Yellow warning of ice affecting North East England",
+    "description": "Yellow warning of ice affecting North East England: Northumberland valid from 0300 Tue 24 Nov to 0900 Tue 24 Nov",
+    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-24&id=9c35ede2-c34e-4fae-8feb-fc79e7aa7b5a&referrer=rss",
+    "published": ""
+   }
+  ],
   "yh": [],
   "wm": [],
   "em": [],
   "ee": [],
-  "sw": [],
+  "sw": [
+   {
+    "title": "Yellow warning of rain affecting South West England",
+    "description": "Yellow warning of rain affecting South West England: Cornwall, Isles of Scilly valid from 1000 Tue 24 Nov to 2359 Tue 24 Nov",
+    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-24&id=21bee47b-ec7d-4891-8d13-44c3b634a490&referrer=rss",
+    "published": ""
+   }
+  ],
   "se": []
  }
 }
