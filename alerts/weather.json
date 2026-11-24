@@ -1,14 +1,7 @@
 {
  "source": "Met Office weather warnings (Crown copyright)",
  "regions": {
-  "uk": [
-   {
-    "title": "Yellow warning of rain affecting South West England",
-    "description": "Yellow warning of rain affecting South West England: Cornwall, Isles of Scilly valid from 0801 Tue 24 Nov to 2359 Tue 24 Nov",
-    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-24&id=21bee47b-ec7d-4891-8d13-44c3b634a490&referrer=rss",
-    "published": ""
-   }
-  ],
+  "uk": [],
   "os": [],
   "he": [],
   "gr": [],
@@ -23,14 +16,7 @@
   "wm": [],
   "em": [],
   "ee": [],
-  "sw": [
-   {
-    "title": "Yellow warning of rain affecting South West England",
-    "description": "Yellow warning of rain affecting South West England: Cornwall, Isles of Scilly valid from 0801 Tue 24 Nov to 2359 Tue 24 Nov",
-    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-24&id=21bee47b-ec7d-4891-8d13-44c3b634a490&referrer=rss",
-    "published": ""
-   }
-  ],
+  "sw": [],
   "se": []
  }
 }
