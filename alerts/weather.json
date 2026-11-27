@@ -1,38 +1,7 @@
 {
  "source": "Met Office weather warnings (Crown copyright)",
  "regions": {
-  "uk": [
-   {
-    "title": "Yellow warning of ice affecting East Midlands",
-    "description": "Yellow warning of ice affecting East Midlands: Derbyshire valid from 0400 Fri 27 Nov to 1400 Fri 27 Nov",
-    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-27&id=9596cb76-cbcc-4b41-ae20-f68f10de2cef&referrer=rss",
-    "published": ""
-   },
-   {
-    "title": "Yellow warning of ice affecting North East England",
-    "description": "Yellow warning of ice affecting North East England: Durham, Northumberland valid from 0400 Fri 27 Nov to 1400 Fri 27 Nov",
-    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-27&id=9596cb76-cbcc-4b41-ae20-f68f10de2cef&referrer=rss",
-    "published": ""
-   },
-   {
-    "title": "Yellow warning of ice affecting North West England",
-    "description": "Yellow warning of ice affecting North West England: Cheshire East, Cumbria, Greater Manchester, Lancashire valid from 0400 Fri 27 Nov to 1400 Fri 27 Nov",
-    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-27&id=9596cb76-cbcc-4b41-ae20-f68f10de2cef&referrer=rss",
-    "published": ""
-   },
-   {
-    "title": "Yellow warning of ice affecting West Midlands",
-    "description": "Yellow warning of ice affecting West Midlands: Staffordshire valid from 0400 Fri 27 Nov to 1400 Fri 27 Nov",
-    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-27&id=9596cb76-cbcc-4b41-ae20-f68f10de2cef&referrer=rss",
-    "published": ""
-   },
-   {
-    "title": "Yellow warning of ice affecting Yorkshire & Humber",
-    "description": "Yellow warning of ice affecting Yorkshire & Humber: North Yorkshire, South Yorkshire, West Yorkshire valid from 0400 Fri 27 Nov to 1400 Fri 27 Nov",
-    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-27&id=9596cb76-cbcc-4b41-ae20-f68f10de2cef&referrer=rss",
-    "published": ""
-   }
-  ],
+  "uk": [],
   "os": [],
   "he": [],
   "gr": [],
@@ -41,46 +10,11 @@
   "dg": [],
   "ni": [],
   "wl": [],
-  "nw": [
-   {
-    "title": "Yellow warning of ice affecting North West England",
-    "description": "Yellow warning of ice affecting North West England: Cheshire East, Cumbria, Greater Manchester, Lancashire valid from 0400 Fri 27 Nov to 1400 Fri 27 Nov",
-    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-27&id=9596cb76-cbcc-4b41-ae20-f68f10de2cef&referrer=rss",
-    "published": ""
-   }
-  ],
-  "ne": [
-   {
-    "title": "Yellow warning of ice affecting North East England",
-    "description": "Yellow warning of ice affecting North East England: Durham, Northumberland valid from 0400 Fri 27 Nov to 1400 Fri 27 Nov",
-    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-27&id=9596cb76-cbcc-4b41-ae20-f68f10de2cef&referrer=rss",
-    "published": ""
-   }
-  ],
-  "yh": [
-   {
-    "title": "Yellow warning of ice affecting Yorkshire & Humber",
-    "description": "Yellow warning of ice affecting Yorkshire & Humber: North Yorkshire, South Yorkshire, West Yorkshire valid from 0400 Fri 27 Nov to 1400 Fri 27 Nov",
-    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-27&id=9596cb76-cbcc-4b41-ae20-f68f10de2cef&referrer=rss",
-    "published": ""
-   }
-  ],
-  "wm": [
-   {
-    "title": "Yellow warning of ice affecting West Midlands",
-    "description": "Yellow warning of ice affecting West Midlands: Staffordshire valid from 0400 Fri 27 Nov to 1400 Fri 27 Nov",
-    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-27&id=9596cb76-cbcc-4b41-ae20-f68f10de2cef&referrer=rss",
-    "published": ""
-   }
-  ],
-  "em": [
-   {
-    "title": "Yellow warning of ice affecting East Midlands",
-    "description": "Yellow warning of ice affecting East Midlands: Derbyshire valid from 0400 Fri 27 Nov to 1400 Fri 27 Nov",
-    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-27&id=9596cb76-cbcc-4b41-ae20-f68f10de2cef&referrer=rss",
-    "published": ""
-   }
-  ],
+  "nw": [],
+  "ne": [],
+  "yh": [],
+  "wm": [],
+  "em": [],
   "ee": [],
   "sw": [],
   "se": []
