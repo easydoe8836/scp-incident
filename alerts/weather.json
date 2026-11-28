@@ -1,7 +1,20 @@
 {
  "source": "Met Office weather warnings (Crown copyright)",
  "regions": {
-  "uk": [],
+  "uk": [
+   {
+    "title": "Yellow warning of rain affecting North West England",
+    "description": "Yellow warning of rain affecting North West England: Cumbria valid from 1200 Mon 30 Nov to 2359 Tue 01 Dec",
+    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-30&id=25d92ee0-e05e-47a5-8a0b-455707ea0dc5&referrer=rss",
+    "published": ""
+   },
+   {
+    "title": "Yellow warning of rain affecting Wales",
+    "description": "Yellow warning of rain affecting Wales: Blaenau Gwent, Bridgend, Caerphilly, Carmarthenshire, Conwy, Gwynedd, Merthyr Tydfil, Neath Port Talbot, Powys, Rhondda Cynon Taf, Torfaen valid from 1200 Mon 30 Nov to 2359 Tue 01 Dec",
+    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-30&id=25d92ee0-e05e-47a5-8a0b-455707ea0dc5&referrer=rss",
+    "published": ""
+   }
+  ],
   "os": [],
   "he": [],
   "gr": [],
@@ -9,8 +22,22 @@
   "ta": [],
   "dg": [],
   "ni": [],
-  "wl": [],
-  "nw": [],
+  "wl": [
+   {
+    "title": "Yellow warning of rain affecting Wales",
+    "description": "Yellow warning of rain affecting Wales: Blaenau Gwent, Bridgend, Caerphilly, Carmarthenshire, Conwy, Gwynedd, Merthyr Tydfil, Neath Port Talbot, Powys, Rhondda Cynon Taf, Torfaen valid from 1200 Mon 30 Nov to 2359 Tue 01 Dec",
+    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-30&id=25d92ee0-e05e-47a5-8a0b-455707ea0dc5&referrer=rss",
+    "published": ""
+   }
+  ],
+  "nw": [
+   {
+    "title": "Yellow warning of rain affecting North West England",
+    "description": "Yellow warning of rain affecting North West England: Cumbria valid from 1200 Mon 30 Nov to 2359 Tue 01 Dec",
+    "link": "https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings#?date=2026-11-30&id=25d92ee0-e05e-47a5-8a0b-455707ea0dc5&referrer=rss",
+    "published": ""
+   }
+  ],
   "ne": [],
   "yh": [],
   "wm": [],
